@@ -24,3 +24,60 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 1.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.perspective-container {
+  perspective: 1px;
+  height: 100vh;
+  overflow: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
+.parallax-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 250vh;
+  transform: translateZ(-1.2px) scale(2.4);
+  background-image: url('/Images/fundo-port.png');
+  background-size: cover;
+  background-position: top;
+  opacity: 0.2;
+  z-index: 0;
+  will-change: transform;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .parallax-bg {
+    opacity: 0.3;
+    height: 130vh;
+    background-repeat: repeat;
+    background-size: cover;
+    transform: translateZ(-3) scale(6);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  }
+}

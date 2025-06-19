@@ -6,9 +6,10 @@ import { GLTFLoader } from 'three-stdlib';
 
 type ThreeSceneProps = {
   scale?: number;
+  onHeadClick?: () => void;
 };
 
-export default function ThreeScene({ scale = 1.5 }: ThreeSceneProps) {
+export default function ThreeScene({ scale = 1.5, onHeadClick }: ThreeSceneProps) {
   const mountRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -103,6 +104,23 @@ export default function ThreeScene({ scale = 1.5 }: ThreeSceneProps) {
             }
         );
 
+        // --- raycaster para clique ---
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+
+        const onClick = (event: MouseEvent) => {
+        if (!head) return;
+        // mapeia coords para [-1,1]
+        const rect = mount.getBoundingClientRect();
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        const hits = raycaster.intersectObject(head, true);
+        if (hits.length && onHeadClick) {
+            onHeadClick();
+        }
+        };
+        renderer.domElement.addEventListener('click', onClick);
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -149,11 +167,11 @@ export default function ThreeScene({ scale = 1.5 }: ThreeSceneProps) {
             window.removeEventListener('touchmove', onTouchMove);
             mount.removeChild(renderer.domElement);
         };
-    }, [scale]);
+    }, [scale, onHeadClick]);
 
   return (
     <div
-    className="w-full h-screen"
+    className="w-full h-screen pointer-events-auto"
     ref={mountRef}
     />
   );

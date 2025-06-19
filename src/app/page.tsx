@@ -55,7 +55,11 @@ export default function Home() {
         alt="Fundo noturno futurista"
         fill
         className="object-cover w-full h-full absolute top-0 left-0 z-0 opacity-60"
-        style={{ objectFit: 'cover' }}
+        style={{
+          objectFit: 'cover',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
+          maskImage:      'linear-gradient(to bottom, black 80%, transparent 100%)',
+        }}
         sizes="100vw"
         quality={100}
         loading="eager" // Carrega a imagem imediatamente para evitar atraso
@@ -70,8 +74,8 @@ export default function Home() {
       </div>
 
       {/* Cabeça 3D */}
-      <div className="w-full flex justify-center pointer-events-none md:flex-1 md:items-center md:justify-center md:relative z-10">
-        <ThreeScene scale={0.5} />
+      <div className="w-full flex justify-center md:flex-1 md:items-center md:justify-center md:relative z-10">
+        <ThreeScene scale={0.5} onHeadClick={() => window.open('/info')}/>
       </div>
 
       {/* Texto de resposta */}
@@ -100,7 +104,7 @@ export default function Home() {
           placeholder="Digite sua pergunta..."
           disabled={loading}
           className={`flex-1 p-4 text-lg rounded-full bg-[#011f35] text-white placeholder-[#00ffff] border-2 border-[#00ffff] focus:outline-none focus:ring-2 focus:ring-[#00ffff] transition-all shadow-md shadow-[#00ffff]/20 ${
-            loading ? 'opacity-50 cursor-not-allowed' : ''
+            loading ? 'opacity-50 cursor-wait' : ''
           }`}
           onKeyDown={e => e.key === 'Enter' && sendQuestion()}
         />
@@ -108,7 +112,7 @@ export default function Home() {
           onClick={sendQuestion}
           disabled={loading}
           className={`px-6 py-3 rounded-full bg-[#00ffff] text-[#001f3f] font-bold text-lg transition-all shadow-lg shadow-[#00ffff]/30 ${
-            loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#00e6e6] cursor-pointer'
+            loading ? 'opacity-50 cursor-wait' : 'hover:bg-[#00e6e6] cursor-pointer'
           }`}
         >
           {loading ? 'Carregando...' : 'Enviar'}

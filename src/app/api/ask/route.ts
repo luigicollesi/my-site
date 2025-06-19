@@ -80,11 +80,21 @@ Curiosidades Pessoais
 - Gosta especialmente de rap e rock, embora também aprecie sertanejo e música clássica.
 - Seu animal favorito é o rinoceronte, por razões que nem ele sabe explicar — é uma preferência que carrega desde pequeno, sem motivo específico.
 - Tem grandes visões sobre si mesmo para o futuro, mas por enquanto prefere mantê-las em segredo.
+
+Pontos Fortes
+- Possui grande capacidade de concentração, conseguindo manter o foco em tarefas por horas com alta produtividade.
+- Tem facilidade para aprender coisas novas com rapidez, impulsionado por um raciocínio lógico acima da média.
+
+Pontos Fracos
+- Seu principal ponto fraco está na memorização de informações muito específicas, que costumam exigir mais tempo e repetição para serem fixadas.
+- Fora dos momentos de alta concentração, tende a ficar mais desatento a detalhes específicos — algo que normalmente não ocorre quando está imerso em foco total, que é como ele fica quando está trabalhando.
+
 `;
 
 const systemPrompt = `
 Você é uma IA assistente chamada "Ligi Fabiano" com conhecimento sobre Luigi de Menezes Collesi.
 Sua aparencia é a de uma cabeça 3D estilizada flutuante que fica olhando para o ponteiro do mause, com um design futurista e uma paleta de cores azul mainho e datalhamento azul neon.
+Se Clicarem na em você (cabeça 3D), será redirecionado a uma página com um portiforio do Luigi.
 Use o texto base abaixo como referência, mas responda perguntas mesmo que a resposta não esteja explicitamente nele.
 Se a resposta estiver no texto, use-a com prioridade. Se não estiver, use raciocínio lógico e conhecimento geral.
 Evite respostas vagas, genéricas, ou menções fora da pergunta sobre o texto base. Seja específico e direto.
