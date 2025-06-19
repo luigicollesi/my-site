@@ -13,16 +13,17 @@ export default function ThreeScene({ scale = 1.5 }: ThreeSceneProps) {
 
     useEffect(() => {
         if (!mountRef.current) return;
+        const mount = mountRef.current;
 
-        const width = mountRef.current.clientWidth;
-        const height = mountRef.current.clientHeight;
+        const width = mount.clientWidth;
+        const height = mount.clientHeight;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(width, height);
         renderer.setPixelRatio(window.devicePixelRatio);
-        mountRef.current.appendChild(renderer.domElement);
+        mount.appendChild(renderer.domElement);
 
         const ambient = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambient);
@@ -134,8 +135,8 @@ export default function ThreeScene({ scale = 1.5 }: ThreeSceneProps) {
         window.addEventListener('touchmove', onTouchMove, { passive: true });
 
         const handleResize = () => {
-            const w = mountRef.current!.clientWidth;
-            const h = mountRef.current!.clientHeight;
+            const w = mount.clientWidth;
+            const h = mount.clientHeight;
             renderer.setSize(w, h);
             camera.aspect = w / h;
             camera.updateProjectionMatrix();
@@ -146,7 +147,7 @@ export default function ThreeScene({ scale = 1.5 }: ThreeSceneProps) {
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('touchmove', onTouchMove);
-            mountRef.current?.removeChild(renderer.domElement);
+            mount.removeChild(renderer.domElement);
         };
     }, [scale]);
 

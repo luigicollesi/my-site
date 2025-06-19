@@ -109,8 +109,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const answer = chat.choices?.[0]?.message?.content?.trim() || 'Não consegui gerar uma resposta.';
 
     return NextResponse.json({ answer });
-  } catch (err: any) {
-    console.error('Erro no endpoint /api/ask:', err.message);
-    return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+        console.error('Erro no endpoint /api/ask:', err.message);
+        return NextResponse.json({ error: err.message }, { status: 500 });
+    } else {
+        console.error('Erro desconhecido no endpoint /api/ask:', err);
+        return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 });
+    }
   }
 }
