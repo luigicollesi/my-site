@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@huggingface/inference':
-        specifier: ^4.0.6
-        version: 4.0.6
       '@react-three/drei':
         specifier: ^10.3.0
         version: 10.3.0(@react-three/fiber@9.1.2(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.177.0))(@types/react@19.1.8)(@types/three@0.177.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.177.0)
@@ -140,17 +137,6 @@ packages:
   '@eslint/plugin-kit@0.3.2':
     resolution: {integrity: sha512-4SaFZCNfJqvk/kenHpI8xvN42DMaoycy4PzKc5otHxRswww1kAt82OlBuwRVLofCACCTZEcla2Ydxv8scMXaTg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@huggingface/inference@4.0.6':
-    resolution: {integrity: sha512-c+2+O46l+NIFoNcA4Qgg4fHdj+HHxkpm/uo8L2xFnSLgaouRon5tf/5fQLMoWoxmJD5H6pHezPF+9hy1+OMAAg==}
-    engines: {node: '>=18'}
-
-  '@huggingface/jinja@0.5.0':
-    resolution: {integrity: sha512-Ptc03/jGRiYRoi0bUYKZ14MkDslsBRT24oxmsvUlfYrvQMldrxCevhPnT+hfX8awKTT8/f/0ZBBWldoeAcMHdQ==}
-    engines: {node: '>=18'}
-
-  '@huggingface/tasks@0.19.16':
-    resolution: {integrity: sha512-8PfeMpvHqax9biZaw9/u1Ut9xWIJ1qIUAd8jAKkv6bKvIAAyTRCZgnwHJmzPffDE6B0VkLlPl5it6GaSg/kxlw==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -2428,15 +2414,6 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.0
       levn: 0.4.1
-
-  '@huggingface/inference@4.0.6':
-    dependencies:
-      '@huggingface/jinja': 0.5.0
-      '@huggingface/tasks': 0.19.16
-
-  '@huggingface/jinja@0.5.0': {}
-
-  '@huggingface/tasks@0.19.16': {}
 
   '@humanfs/core@0.19.1': {}
 
