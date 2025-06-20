@@ -1,16 +1,18 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three-stdlib';
 
 type ThreeSceneProps = {
   scale?: number;
-  onHeadClick?: () => void;
+  redirectUrl?: string;
 };
 
-export default function ThreeScene({ scale = 1.5, onHeadClick }: ThreeSceneProps) {
+export default function ThreeScene({ scale = 1.5, redirectUrl }: ThreeSceneProps) {
   const mountRef = useRef<HTMLDivElement>(null);
+
+  const [hover, setHover] = useState(false);
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -37,6 +39,10 @@ export default function ThreeScene({ scale = 1.5, onHeadClick }: ThreeSceneProps
 
         let head: THREE.Object3D | null = null;
         const mouse = { x: 0, y: 0 };
+
+        // --- raycaster para clique ---
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
 
         loader.load(
             '/models/head.glb',
@@ -104,24 +110,6 @@ export default function ThreeScene({ scale = 1.5, onHeadClick }: ThreeSceneProps
             }
         );
 
-        // --- raycaster para clique ---
-        const raycaster = new THREE.Raycaster();
-        const pointer = new THREE.Vector2();
-
-        const onClick = (event: MouseEvent) => {
-        if (!head) return;
-        // mapeia coords para [-1,1]
-        const rect = mount.getBoundingClientRect();
-        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        raycaster.setFromCamera(pointer, camera);
-        const hits = raycaster.intersectObject(head, true);
-        if (hits.length && onHeadClick) {
-            onHeadClick();
-        }
-        };
-        renderer.domElement.addEventListener('click', onClick);
-
         const animate = () => {
             requestAnimationFrame(animate);
 
@@ -140,6 +128,15 @@ export default function ThreeScene({ scale = 1.5, onHeadClick }: ThreeSceneProps
         const onMouseMove = (event: MouseEvent) => {
             mouse.x = (event.clientX / width - 0.5) * 2;
             mouse.y = (event.clientY / height - 0.5) * 2;
+
+            if (!head) return;
+            const rect = mount.getBoundingClientRect();
+            pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(pointer, camera);
+            const hit = raycaster.intersectObject(head, true).length > 0;
+
+            setHover(hit);
         };
         window.addEventListener('mousemove', onMouseMove);
 
@@ -167,12 +164,21 @@ export default function ThreeScene({ scale = 1.5, onHeadClick }: ThreeSceneProps
             window.removeEventListener('touchmove', onTouchMove);
             mount.removeChild(renderer.domElement);
         };
-    }, [scale, onHeadClick]);
+    }, [scale]);
 
   return (
-    <div
-    className="w-full h-screen pointer-events-auto"
-    ref={mountRef}
-    />
+    <div className="relative w-full h-screen pointer-events-auto" ref={mountRef}>
+        {hover && redirectUrl && (
+        <a
+            href={redirectUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute top-0 left-0 w-full h-full z-10"
+            style={{ display: 'block' }}
+        >
+            {/* Link invisível que ativa o preview de URL no canto inferior esquerdo */}
+        </a>
+        )}
+    </div>
   );
 }

@@ -75,7 +75,7 @@ export default function Home() {
 
       {/* Cabeça 3D */}
       <div className="w-full flex justify-center md:flex-1 md:items-center md:justify-center md:relative z-10">
-        <ThreeScene scale={0.5} onHeadClick={() => window.open('/info')}/>
+        <ThreeScene scale={0.5} redirectUrl='/info'/>
       </div>
 
       {/* Texto de resposta */}
