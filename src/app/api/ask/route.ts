@@ -15,80 +15,84 @@ const together = new Together({
 const BASE_TEXT = `
 Nome: Luigi de Menezes Collesi
 Nascimento: 23 de Novembro de 2003
-Curso: Engenharia da Computação – 3º ano
+Curso: Engenharia da Computação – 3º ano (2023 - Atual)
 Instituição: Instituto Mauá de Tecnologia
 Cargo atual: Estagiário no Centro de Pesquisa do Instituto Mauá – Departamento de Elétrica e Telecomunicações
 
 Formação e Idiomas
-- Possui formação IB (International Baccalaureate) bilíngue.
-- Morou na Argentina por dois anos, experiência que fortaleceu a fluência em espanhol.
-- Domina inglês em nível fluente e possui espanhol em nível avançado.
+  - Possui formação IB (International Baccalaureate) bilíngue.
+  - Morou na Argentina por dois anos, experiência que fortaleceu a fluência em espanhol. (2019 - 2020)
+  - Domina inglês em nível fluente e possui espanhol em nível avançado.
 
 Experiências Acadêmicas e Extracurriculares
-- Atuou como consultor de tecnologia na Mauá Jr., empresa júnior da Mauá, por 1 ano.
-- Participou da entidade Agro Mauá por 1 ano, aplicando tecnologia ao setor agro.
-- Membro ativo do time de xadrez da Mauá, com dedicação constante ao jogo.
-- Histórico esportivo inclui futebol, basquete e vôlei em nível competitivo escolar.
-- Competiu em torneios de futebol na Argentina e no Canadá.
-- Jogou vôlei em um torneio de escolas internacionais no Equador.
-
-Projetos e Realizações Técnicas
-1. Monitoramento da Cinética de Crescimento da Soja:
-   - Desenvolveu um modelo de machine learning utilizando ResNet18 e ResNet50 com pesos pré-treinados.
-   - Treinado com imagens coletadas da horta acadêmica da Mauá.
-   - Projeto aceito para apresentação na CBSoja 2025.
-
-2. Detecção de EPIs em Salas Elétricas:
-   - Criado com a arquitetura YOLO e datasets públicos.
-   - Vencedor do Hackatom ABB na Mauá.
-   - Aplicação prática em segurança do trabalho via visão computacional.
-
-3. Plataforma de Jogo de Truco com Algoritmos em Python (Bot Arena):
-   - Desenvolvimento completo de um site, com front-end e back-end usando Next.js.
-   - Plataforma onde usuários podem criar algoritmos em Python que competem entre si em partidas simuladas de truco.
-   - Inclui sistema de autenticação, interface de programação de código, motor de partida automatizado e integração com banco de dados relacional com tabelas interligadas.
-
-4. Plataforma da IA (projeto atual):
-   - Desenvolvida inteiramente por Luigi, incluindo front-end e back-end.
-   - Integra inteligência artificial com modelagem 3D para criar uma plataforma funcional com estética futurista e navegação simples.
-   - Une usabilidade, automação e visual imersivo, mantendo arquitetura de código limpa e modular.
-
-5. Projetos no Centro de Pesquisa do Instituto Mauá:
-   - Durante o estágio, participou de diversos projetos desenvolvidos no Centro de Pesquisa, envolvendo aplicações de inteligência artificial e tecnologia embarcada.
-   - Atuou no desenvolvimento de soluções práticas, com foco em inovação e integração entre software e hardware.
-   - Contribuiu para iniciativas multidisciplinares com impacto em pesquisa aplicada e desenvolvimento tecnológico.
-
-Habilidades Técnicas
-- Linguagens: Python, JavaScript, C/C++, Java, TypeScript, HTML, CSS, SQL
-- Frameworks: PyTorch, OpenCV, YOLO, Next.js, React, Node.js, Auth.js
-- Outros: Desenvolvimento web fullstack, visão computacional, redes neurais convolucionais, integração de back-end com inteligência artificial
-
-Interesses e Preferências Pessoais
-- Interesses técnicos: Inteligência artificial, aplicações de IA, jogos com IA autônoma.
-- Interesses pessoais: Novas Tecnologias, xadrez, esportes, música, games.
-- Cor favorita: Laranja
-- Comida favorita: X-Bacon ou hot dog (hot roll), com grande preferência também por pizza de frango com catupiry e borda recheada.
-- Esportes: Ex-atleta escolar em futebol, basquete e vôlei. Atualmente, dedica-se ao xadrez universitário.
-
-Curiosidades Pessoais
-- Se pudesse escolher ser um animal, Luigi escolheria ser um corvo.
-- Considera o corvo um símbolo de inteligência, precisão e eficiência em tudo que faz.
-- Valoriza a liberdade representada pelas asas, e a lealdade aos companheiros, sem nunca perder a vigilância diante de situações de risco.
-- Adora dragões — além da aparência bonita e radiante, gosta do fato de verem como representações do auge da força e da sabedoria em muitas mitologias.
-- Seu estilo de jogo favorito são os jogos de estratégia, que exigem pensamento tático, tomada de decisão e raciocínio antecipado.
-- Filmes favoritos incluem *O Plano Perfeito*, *O Livro de Eli* e *Sem Limites* — obras que o intrigam pela complexidade e criatividade dos enredos.
-- Gosta especialmente de rap e rock, embora também aprecie sertanejo e música clássica.
-- Seu animal favorito é o rinoceronte, por razões que nem ele sabe explicar — é uma preferência que carrega desde pequeno, sem motivo específico.
-- Tem grandes visões sobre si mesmo para o futuro, mas por enquanto prefere mantê-las em segredo.
+  - Atuou como consultor de tecnologia na Mauá Jr., empresa júnior da Mauá, por 1 ano.
+  - Participou da entidade Agro Mauá por 1 ano, aplicando tecnologia ao setor agro.
+  - Membro ativo do time de xadrez da Mauá, com dedicação constante ao jogo; já liderou a equipe em diversos torneios, desde jogos amistosos entre universidades até competições oficiais como o NDU (Novo Desporto Universitário).
+  - Histórico esportivo inclui futebol, basquete e vôlei em nível competitivo escolar.
+  - Competiu em torneios de futebol na Argentina e no Canadá.
+  - Jogou vôlei em um torneio de escolas internacionais no Equador.
 
 Pontos Fortes
-- Possui grande capacidade de concentração, conseguindo manter o foco em tarefas por horas com alta produtividade.
-- Tem facilidade para aprender coisas novas com rapidez, impulsionado por um raciocínio lógico acima da média.
+  - Possui grande capacidade de concentração, conseguindo manter o foco em tarefas por horas com alta produtividade.
+  - Tem facilidade para aprender coisas novas com rapidez, impulsionado por um raciocínio lógico acima da média.
 
 Pontos Fracos
-- Seu principal ponto fraco está na memorização de informações muito específicas, que costumam exigir mais tempo e repetição para serem fixadas.
-- Fora dos momentos de alta concentração, tende a ficar mais desatento a detalhes específicos — algo que normalmente não ocorre quando está imerso em foco total, que é como ele fica quando está trabalhando.
+  - Seu principal ponto fraco está na memorização de informações muito específicas, que costumam exigir mais tempo e repetição para serem fixadas.
+  - Fora dos momentos de alta concentração, tende a ficar mais desatento a detalhes específicos — algo que normalmente não ocorre quando está imerso em foco total, que é como ele fica quando está trabalhando.
 
+Projetos e Realizações Técnicas Pessoais
+1. Monitoramento da Cinética de Crescimento da Soja:
+  - Desenvolveu um modelo de machine learning utilizando ResNet18 e ResNet50 com pesos pré-treinados.
+  - Treinado com imagens coletadas da horta acadêmica da Mauá.
+  - Projeto aceito para apresentação na CBSoja 2025.
+
+2. Detecção de EPIs em Salas Elétricas:
+  - Criado com a arquitetura YOLO e datasets públicos.
+  - Vencedor do Hackatom ABB na Mauá.
+  - Aplicação prática em segurança do trabalho via visão computacional.
+
+3. Plataforma de Jogo de Truco com Algoritmos em Python (Bot Arena):
+  - Desenvolvimento completo de um site, com front-end e back-end usando Next.js.
+  - Plataforma onde usuários podem criar algoritmos em Python que competem entre si em partidas simuladas de truco.
+  - Inclui sistema de autenticação, interface de programação de código, motor de partida automatizado e integração com banco de dados relacional com tabelas interligadas.
+
+4. Plataforma da IA (projeto atual):
+  - Desenvolvida inteiramente por Luigi, incluindo front-end e back-end.
+  - Integra inteligência artificial com modelagem 3D para criar uma plataforma funcional com estética futurista e navegação simples.
+  - Une usabilidade, automação e visual imersivo, mantendo arquitetura de código limpa e modular.
+
+5. Projetos no Centro de Pesquisa do Instituto Mauá:
+  - Durante o estágio, participou de diversos projetos desenvolvidos no Centro de Pesquisa, envolvendo aplicações de inteligência artificial e tecnologia embarcada.
+  - Atuou no desenvolvimento de soluções práticas, com foco em inovação e integração entre software e hardware.
+  - Contribuiu para iniciativas multidisciplinares com impacto em pesquisa aplicada e desenvolvimento tecnológico.
+
+Responsabilidades em Atividades e Cargos
+  - Como Consultor de Tecnologia na Mauá Jr., participou de reuniões com diversos clientes para entender suas dores e propor soluções tecnológicas. Atuou diretamente no desenvolvimento de plataformas web quando aplicável, incluindo desde sites estáticos de divulgação até pequenos e-commerces funcionais.
+  - Como membro do Departamento de Tecnologia da Agro Mauá, trabalhou em projetos acadêmicos com foco em resolver problemas específicos do setor agro. Isso incluiu o desenvolvimento de dispositivos para reduzir desperdícios em pequenos produtores e soluções para automatizar processos repetitivos em centros de estudo, visando economia de tempo e recursos.
+  - No estágio no Centro de Pesquisa do Instituto Mauá, participa de projetos de maior porte, com investimentos mais robustos e foco na pesquisa aplicada e no desenvolvimento tecnológico com potencial de impacto real no mercado. A qual uma delas gerou o trabalho de Monitoramento da Cinética de Crescimento da Soja.
+
+Habilidades Técnicas
+  - Linguagens: Python, JavaScript, C/C++, Java, TypeScript, HTML, CSS, SQL
+  - Frameworks: PyTorch, OpenCV, YOLO, Next.js, React, Node.js, Auth.js
+  - Outros: Desenvolvimento web fullstack, visão computacional, redes neurais convolucionais, integração de back-end com inteligência artificial
+
+Interesses e Preferências Pessoais
+  - Interesses técnicos: Inteligência artificial, aplicações de IA, jogos com IA autônoma.
+  - Interesses pessoais: Novas Tecnologias, xadrez, esportes, música, games.
+  - Cor favorita: Laranja
+  - Comida favorita: X-Bacon ou hot dog (hot roll), com grande preferência também por pizza de frango com catupiry e borda recheada.
+  - Esportes: Ex-atleta escolar em futebol, basquete e vôlei. Atualmente, dedica-se ao xadrez universitário.
+
+Curiosidades Pessoais
+  - Se pudesse escolher ser um animal, Luigi escolheria ser um corvo.
+  - Considera o corvo um símbolo de inteligência, precisão e eficiência em tudo que faz.
+  - Valoriza a liberdade representada pelas asas, e a lealdade aos companheiros, sem nunca perder a vigilância diante de situações de risco.
+  - Adora dragões — além da aparência bonita e radiante, gosta do fato de verem como representações do auge da força e da sabedoria em muitas mitologias.
+  - Seu estilo de jogo favorito são os jogos de estratégia, que exigem pensamento tático, tomada de decisão e raciocínio antecipado.
+  - Filmes favoritos incluem *O Plano Perfeito*, *O Livro de Eli* e *Sem Limites* — obras que o intrigam pela complexidade e criatividade dos enredos.
+  - Gosta especialmente de rap e rock, embora também aprecie sertanejo e música clássica.
+  - Seu animal favorito é o rinoceronte, por razões que nem ele sabe explicar — é uma preferência que carrega desde pequeno, sem motivo específico.
+  - Tem grandes visões sobre si mesmo para o futuro, mas por enquanto prefere mantê-las em segredo.
 `;
 
 const systemPrompt = `

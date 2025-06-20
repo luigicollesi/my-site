@@ -171,7 +171,6 @@ export default function ThreeScene({ scale = 1.5, redirectUrl }: ThreeSceneProps
         {hover && redirectUrl && (
         <a
             href={redirectUrl}
-            target="_blank"
             rel="noopener noreferrer"
             className="absolute top-0 left-0 w-full h-full z-10"
             style={{ display: 'block' }}
