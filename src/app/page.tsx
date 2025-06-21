@@ -128,7 +128,7 @@ export default function Home() {
           <FaLinkedin size={24} /> <span className="font-semibold">LinkedIn</span>
         </Link>
         <Link href="https://gamingcodev2.onrender.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00e6e6] transition-colors">
-          <FaRobot size={24} /> <span className="font-semibold">Bot Arena</span>
+          <FaRobot size={24} /> <span className="font-semibold">CardBot Arena</span>
         </Link>
       </div>
 
