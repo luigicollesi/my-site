@@ -6,10 +6,11 @@ import { FaInstagram, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 export default function Home() {
     
   return (
+    <>
+    <Link href="/" className="fixed top-4 left-4 px-6 py-2 text-cyan-400 border-2 border-cyan-400 rounded-lg font-mono text-lg shadow-[0_0_10px_#0ff] hover:bg-cyan-400 hover:text-black hover:shadow-[0_0_20px_#0ff] transition duration-300 z-50">
+    IA
+    </Link>
     <div className="perspective-container bg-black">
-        <Link href="/" className="fixed top-4 left-4 px-6 py-2 text-cyan-400 border-2 border-cyan-400 rounded-lg font-mono text-lg shadow-[0_0_10px_#0ff] hover:bg-cyan-400 hover:text-black hover:shadow-[0_0_20px_#0ff] transition duration-300 z-50">
-        IA
-        </Link>
 
         <div className="parallax-bg" />
 
@@ -134,6 +135,7 @@ export default function Home() {
             </div>
         </div>
     </div>
+    </>
   );
 }
 
