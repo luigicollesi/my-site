@@ -19,10 +19,9 @@ const together = new Together({
 });
 
 const BASE_TEXT = `
+A data de Hoje é: ${dataHoraFormatada}
 
-Contexto gerado em: ${dataHoraFormatada}
-
-Nome: Luigi de Menezes Collesi
+Nome: Luigi de Menezes Collesi. Também conhecido apenas por Luigi.
 Nascimento: 23 de Novembro de 2003
 Curso: Engenharia da Computação – 3º ano (2023 - Atual)
 Instituição: Instituto Mauá de Tecnologia
