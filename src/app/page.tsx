@@ -79,8 +79,8 @@ export default function Home() {
       </div>
 
       {/* Texto de resposta */}
-      <div className="text-lg md:text-xl leading-relaxed text-[#00ffff] text-center max-w-lg md:absolute md:left-6 md:top-1/2 md:-translate-y-1/2 md:text-left md:max-w-xs z-10">
-        {loading ? (
+      <div className="text-lg md:text-xl leading-relaxed text-[#00ffff] text-center max-w-lg md:absolute md:left-6 md:top-1/2 md:-translate-y-1/2 md:text-left md:max-w-xs z-10 md:max-h-screen md:overflow-y-auto">
+      {loading ? (
           <p className="animate-pulse">…carregando resposta</p>
         ) : typingAnswer ? (
           <p>

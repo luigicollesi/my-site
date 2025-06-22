@@ -65,7 +65,7 @@ Projetos e Realizações Técnicas Pessoais
   - Plataforma onde usuários podem criar algoritmos em Python que competem entre si em partidas simuladas de truco.
   - Inclui sistema de autenticação, interface de programação de código, motor de partida automatizado e integração com banco de dados relacional com tabelas interligadas.
 
-4. Plataforma da IA (projeto atual):
+4. Plataforma da IA (projeto é o site em que você está):
   - Desenvolvida inteiramente por Luigi, incluindo front-end e back-end.
   - Integra inteligência artificial com modelagem 3D para criar uma plataforma funcional com estética futurista e navegação simples.
   - Une usabilidade, automação e visual imersivo, mantendo arquitetura de código limpa e modular.
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
       ],
       temperature: 0.7,
-      max_tokens: 200,
+      max_tokens: 300,
     });
 
     const answer = chat.choices?.[0]?.message?.content?.trim() || 'Não consegui gerar uma resposta.';
