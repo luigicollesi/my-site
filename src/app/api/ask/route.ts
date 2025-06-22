@@ -8,16 +8,26 @@ if (!TOGETHER_API_KEY) {
   throw new Error('A variável de ambiente TOGETHER_API_KEY não está definida.');
 }
 
+const now = new Date();
+const dataHoraFormatada = now.toLocaleString('pt-BR', {
+  dateStyle: 'full',
+  timeStyle: 'short',
+});
+
 const together = new Together({
   apiKey: TOGETHER_API_KEY,
 });
 
 const BASE_TEXT = `
+
+Contexto gerado em: ${dataHoraFormatada}
+
 Nome: Luigi de Menezes Collesi
 Nascimento: 23 de Novembro de 2003
 Curso: Engenharia da Computação – 3º ano (2023 - Atual)
 Instituição: Instituto Mauá de Tecnologia
 Cargo atual: Estagiário no Centro de Pesquisa do Instituto Mauá – Departamento de Elétrica e Telecomunicações
+Reside atualmente na zona sul de São Paulo, próximo ao Morumbi Shopping.
 
 Formação e Idiomas
   - Possui formação IB (International Baccalaureate) bilíngue.
