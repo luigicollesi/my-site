@@ -81,7 +81,7 @@ export default function Home() {
                         period="2025"
                         />
                         <TimelineItem
-                        title="Bot Arena – Plataforma de Truco com Algoritmos"
+                        title="CardBot Arena – Plataforma de Truco com Algoritmos"
                         institution="Next.js com back-end, autenticação e IA em Python"
                         period="2025"
                         />
@@ -127,8 +127,8 @@ export default function Home() {
 
                 <Section title="Interesses">
                 <div className="space-y-6">
-                    <TimelineItem title="Interesses Técnicos" institution="IA aplicada, jogos com IA autônoma" period="" />
-                    <TimelineItem title="Interesses Pessoais" institution="Novas tecnologias, xadrez, esportes, música, games" period="" />
+                    <TimelineItem title="Interesses Técnicos" institution="IA Aplicada, Pesquisas na área de computação" period="" />
+                    <TimelineItem title="Interesses Pessoais" institution="Novas Tecnologias, Xadrez, Esportes, Games" period="" />
                 </div>
                 </Section>
             </div>
