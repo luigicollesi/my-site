@@ -23,7 +23,7 @@ A data de Hoje é: ${dataHoraFormatada}
 
 Nome: Luigi de Menezes Collesi. Também conhecido apenas por Luigi.
 Nascimento: 23 de Novembro de 2003
-Curso: Engenharia da Computação (inicio de 2023 - Atual)-(Previsão de conclusão no final de 2027)
+Curso: Engenharia da Computação (inicio de 2023 - Atual)-(Previsão de conclusão no final de 2027)-(23 foi seu preimeiro ano do curso)
 Instituição: Instituto Mauá de Tecnologia
 Cargo atual: Estagiário no Centro de Pesquisa do Instituto Mauá – Departamento de Elétrica e Telecomunicações
 Reside atualmente na zona sul de São Paulo, próximo ao Morumbi Shopping.
