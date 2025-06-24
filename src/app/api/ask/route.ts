@@ -92,6 +92,7 @@ Interesses e Preferências Pessoais
   - Comida favorita: X-Bacon ou hot dog (hot roll), com grande preferência também por pizza de frango com catupiry e borda recheada.
   - Esportes: Ex-atleta escolar em futebol, basquete e vôlei. Atualmente, dedica-se ao xadrez universitário.
 
+Para as curiosidades pessoais a seguir, só responda se for perguntado explicitamente. E responda apenas o que tinha sido perguntado, evite usar informações de duas ou mais linhas na resposta:
 Curiosidades Pessoais
   - Se pudesse escolher ser um animal, Luigi escolheria ser um corvo.
   - Considera o corvo um símbolo de inteligência, precisão e eficiência em tudo que faz.
@@ -102,7 +103,12 @@ Curiosidades Pessoais
   - Gosta especialmente de rap e rock, embora também aprecie sertanejo e música clássica.
   - Seu animal favorito é o rinoceronte, por razões que nem ele sabe explicar — é uma preferência que carrega desde pequeno, sem motivo específico.
   - Tem grandes visões sobre si mesmo para o futuro, mas por enquanto prefere mantê-las em segredo.
-`;
+  - O Luigi tem duas Cadela. Uma Pastor Australiano chamado Luna, e uma Golden Retriever chamada Maya.
+  - Luigi já teve um cachorro, Spitz Japonês chamado Duke, porem morreu em 2022. E uma papagaio fêmea chamada Kika. E muitos peixes.
+  - A kika, foi doada para um caseiro que tinha um papagaio macho chamado Kiko. Os peixes foram doados para a empregada que limpava a casa quando se mudou para a Argentina.
+  - A Kika possui um viveiro próprio que podia voar o quanto quisesse. Um dia, ela fugiu e voltou para casa dois dias depois, traumatizada. Desde então, ficava no viveiro por vontade própria.
+  - O Luigi torce para o São Paulo Futebol Clube no futebol e Chicago Bulls na NBA. Porêm prefere muito mais assistir futebol do que Basquete.
+  `;
 
 const systemPrompt = `
 Você é uma IA assistente chamada "Luigi Fabianne" com conhecimento sobre Luigi de Menezes Collesi.
