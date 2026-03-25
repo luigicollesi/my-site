@@ -41,13 +41,19 @@ export function createOpenRouterClient(): AiProviderClient {
             }
           : undefined;
 
-      const response = await client.chat.completions.create({
+      const requestBody: Record<string, unknown> = {
         model: config.model,
         messages: params.messages,
         temperature: params.temperature,
         max_tokens: params.maxTokens,
-        provider,
-      });
+      };
+
+      if (provider) {
+        // OpenRouter accepts `provider`, but `openai` SDK types don't declare it.
+        requestBody.provider = provider;
+      }
+
+      const response = await client.chat.completions.create(requestBody as never);
 
       const text = response.choices?.[0]?.message?.content?.trim() || '';
 
