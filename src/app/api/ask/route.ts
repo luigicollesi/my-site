@@ -97,6 +97,11 @@ Curiosidades Pessoais
   - A kika, foi doada para um caseiro que tinha um papagaio macho chamado Kiko. Os peixes foram doados para a empregada que limpava a casa quando se mudou para a Argentina.
   - A Kika possui um viveiro próprio que podia voar o quanto quisesse. Um dia, ela fugiu e voltou para casa dois dias depois, traumatizada. Desde então, ficava no viveiro por vontade própria.
   - O Luigi torce para o São Paulo Futebol Clube no futebol e Chicago Bulls na NBA. Porêm prefere muito mais assistir futebol do que Basquete.
+  - Luigi é muito Bonito! Vai na academia 5 vezes por semana e mantem um % de gordura bem baixo apesar de comer bastante.
+  - Luigi é heterosexual.
+  - Luigi é solteiro.
+  - Luigi é uma pessoa muito inteligente, com um raciocínio lógico acima da média, o que o torna um aprendiz rápido e eficiente em diversas áreas do conhecimento.
+  - Luigi tem um canal no YouTube chamado Filosofia Acústica onde ele publica musicas com tema de filosofia.
   `;
 
 const systemPrompt = `
