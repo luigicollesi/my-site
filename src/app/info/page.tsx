@@ -19,7 +19,7 @@ export default function Home() {
             <div className="max-w-5xl mx-auto text-center mb-16 animate-fade-in relative mt-8 md:mt-0 z-10">
                 <h1 className="text-5xl font-bold text-cyan-400 drop-shadow-lg tracking-wide z-10">Luigi de Menezes Collesi</h1>
                 <p className="text-base text-gray-400 mt-2 z-10">Nascido em 23 de Novembro de 2003</p>
-                <p className="text-xl mt-4 text-gray-300 z-10">Estagiário no Centro de Pesquisa do Instituto Mauá</p>
+                <p className="text-xl mt-4 text-gray-300 z-10">Estagiário na Engineering Brasil</p>
                 <div className="mt-6 flex justify-center gap-4">
                 <a href="https://linkedin.com/in/luigi-collesi" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-300 transition">
                     <FaLinkedin size={24} />
@@ -37,7 +37,7 @@ export default function Home() {
                 <Section title="Formação Acadêmica e Idiomas">
                     <div className="space-y-6">
                         <TimelineItem
-                        title="Engenharia da Computação – 3º ano"
+                        title="Engenharia da Computação – 4º ano"
                         institution="Instituto Mauá de Tecnologia"
                         period="2023 - Atual"
                         />
@@ -69,6 +69,31 @@ export default function Home() {
                     </div>
                 </Section>
 
+                <Section title="Experiências Profissionais">
+                    <div className="space-y-6">
+                        <TimelineItem
+                          title="Estagiário no Centro de Pesquisa do Instituto Mauá de Tecnologia"
+                          institution="Pesquisa aplicada e desenvolvimento tecnológico"
+                          period="De dezembro de 2024 a outubro de 2025"
+                        />
+                        <TimelineItem
+                          title="Estagiário no Departamento de Project Industry da ABB Brasil"
+                          institution="Suporte a projetos industriais e soluções de engenharia"
+                          period="De outubro de 2025 a janeiro de 2026"
+                        />
+                        <TimelineItem
+                          title="Estagiário de QA na Engineering Brasil"
+                          institution="Garantia de qualidade, testes e validação de software"
+                          period="De março de 2026 até o momento"
+                        />
+                        <TimelineItem
+                          title="Experiências freelance em Desenvolvimento de Plataformas Web Inteligentes"
+                          institution="Projetos sob demanda com foco em automação, IA e experiência do usuário"
+                          period="Em paralelo às atividades profissionais"
+                        />
+                    </div>
+                </Section>
+
                 <Section title="Projetos e Realizações Técnicas">
                     <div className="space-y-6">
                         <TimelineItem
@@ -87,7 +112,7 @@ export default function Home() {
                         period="2025"
                         />
                         <TimelineItem
-                        title="Plataforma de IA com Modelagem 3D"
+                        title="Meu Site! – Portfólio Pessoal com Experiência Imersiva"
                         institution="Integração de IA, front-end e back-end com design imersivo"
                         period="Projeto atual"
                         />
