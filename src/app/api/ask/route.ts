@@ -1,21 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Together from 'together-ai';
-
-const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY;
-const MODEL = 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free';
-
-if (!TOGETHER_API_KEY) {
-  throw new Error('A variável de ambiente TOGETHER_API_KEY não está definida.');
-}
+import { chatCompletion } from '@/lib/ai';
 
 const now = new Date();
 const dataHoraFormatada = now.toLocaleString('pt-BR', {
   dateStyle: 'full',
   timeStyle: 'short',
-});
-
-const together = new Together({
-  apiKey: TOGETHER_API_KEY,
 });
 
 const BASE_TEXT = `
@@ -132,8 +121,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Pergunta vazia' }, { status: 400 });
     }
 
-    const chat = await together.chat.completions.create({
-      model: MODEL,
+    const chat = await chatCompletion({
       messages: [
         {
           role: 'system',
@@ -145,15 +133,28 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
       ],
       temperature: 0.7,
-      max_tokens: 300,
+      maxTokens: 300,
     });
 
-    const answer = chat.choices?.[0]?.message?.content?.trim() || 'Não consegui gerar uma resposta.';
+    const answer = chat.text || 'Não consegui gerar uma resposta.';
 
     return NextResponse.json({ answer });
   } catch (err: unknown) {
     if (err instanceof Error) {
         console.error('Erro no endpoint /api/ask:', err.message);
+        const isPrivacyGuardrailError =
+          err.message.includes('No endpoints available matching your guardrail restrictions and data policy');
+
+        if (isPrivacyGuardrailError) {
+          return NextResponse.json(
+            {
+              error:
+                'OpenRouter bloqueou a rota por política de privacidade/guardrails. Ajuste https://openrouter.ai/settings/privacy ou configure LLM_OPENROUTER_DATA_COLLECTION=allow e/ou LLM_OPENROUTER_ZDR=false para este ambiente.',
+            },
+            { status: 502 }
+          );
+        }
+
         return NextResponse.json({ error: err.message }, { status: 500 });
     } else {
         console.error('Erro desconhecido no endpoint /api/ask:', err);

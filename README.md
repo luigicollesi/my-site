@@ -20,6 +20,32 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## AI Configuration (OpenRouter)
+
+This project uses a centralized AI backend layer with OpenRouter in `src/lib/ai/*`.
+
+1. Copy `.env.example` to `.env`.
+2. Set:
+   - `LLM_PROVIDER=openrouter`
+   - `LLM_MODEL=<your-openrouter-model>`
+   - `LLM_OPENROUTER_API_KEY=<your-openrouter-api-key>`
+3. Optional:
+   - `LLM_DEBUG=true` for request/response debug logs (server-side only)
+   - `LLM_OPENROUTER_APP_NAME` and `LLM_OPENROUTER_APP_URL` for OpenRouter attribution headers
+   - Privacy/routing controls (helpful when you hit OpenRouter data-policy guardrails):
+     - `LLM_OPENROUTER_DATA_COLLECTION=allow|deny`
+     - `LLM_OPENROUTER_ZDR=true|false`
+     - `LLM_OPENROUTER_ALLOW_FALLBACKS=true|false`
+     - `LLM_OPENROUTER_ONLY=<csv providers>`
+     - `LLM_OPENROUTER_IGNORE=<csv providers>`
+
+Install dependencies manually:
+
+```bash
+npm install openai
+npm uninstall together-ai
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
