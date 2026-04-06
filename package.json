@@ -12,6 +12,7 @@
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
     "@react-three/postprocessing": "^3.0.4",
+    "luigicollesi": "link:",
     "next": "16.2.1",
     "openai": "^6.32.0",
     "react": "^19.0.0",

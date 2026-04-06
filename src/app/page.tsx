@@ -1,143 +1,335 @@
 'use client';
 
-import ThreeScene from '@/app/components/ThreeScene';
-import { FaInstagram, FaLinkedin } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import ThreeScene from '@/app/components/ThreeScene';
 
 export default function Home() {
-  const [question, setQuestion] = useState('');
-  const [typingAnswer, setTypingAnswer] = useState('');
-  const [fullAnswer, setFullAnswer] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [mobileSceneHeight, setMobileSceneHeight] = useState(320);
+  const [mobileNameScale, setMobileNameScale] = useState(1.02);
+  const [mobileNameYOffset, setMobileNameYOffset] = useState(0.03);
+  const [mobileCameraDistance, setMobileCameraDistance] = useState(0.84);
+  const [tabletNameScale, setTabletNameScale] = useState(1.5);
+  const [tabletNameYOffset, setTabletNameYOffset] = useState(0.065);
+  const [tabletCameraDistance, setTabletCameraDistance] = useState(0.72);
+  const whatsappMessage = encodeURIComponent(
+    'Olá, tudo bem? Tenho interesse em criar uma plataforma web e gostaria de conversar sobre escopo, prazo e orçamento.'
+  );
+  const whatsappLink = `https://wa.me/5511988658728?text=${whatsappMessage}`;
 
-  const sendQuestion = async () => {
-    if (!question.trim()) return;
-    setTypingAnswer('');
-    setFullAnswer('');
-    setLoading(true);
-    try {
-      const res = await fetch('/api/ask', {
-        method: 'POST',
-        body: JSON.stringify({ question }),
-      });
-      const json = await res.json();
-      const text: string = json.answer || 'Desculpe, não consegui responder.';
-      if (json.answer) {
-        setQuestion(''); // Limpa o campo de pergunta
-      }
-      setFullAnswer(text);
-    } catch {
-      setFullAnswer('Erro de comunicação com o servidor.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Efeito de digitação (typewriter)
   useEffect(() => {
-    if (!fullAnswer) return;
-    let i = 0;
-    const interval = setInterval(() => {
-      setTypingAnswer(fullAnswer.slice(0, ++i));
-      if (i >= fullAnswer.length) clearInterval(interval);
-    }, 20);
-    return () => clearInterval(interval);
-  }, [fullAnswer]);
+    const updateMobileViewport = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      const targetHeight = Math.round(Math.min(Math.max(h * 0.5, 250), 420));
+      setMobileSceneHeight(targetHeight);
+
+      if (w <= 360) {
+        setMobileNameScale(0.2);
+        setMobileNameYOffset(0.01);
+        setMobileCameraDistance(1.42);
+        return;
+      }
+
+      if (w <= 390) {
+        setMobileNameScale(0.23);
+        setMobileNameYOffset(0.02);
+        setMobileCameraDistance(1.38);
+        return;
+      }
+
+      if (w <= 430) {
+        setMobileNameScale(0.28);
+        setMobileNameYOffset(0.03);
+        setMobileCameraDistance(1.34);
+        return;
+      }
+
+      setMobileNameScale(0.33);
+      setMobileNameYOffset(0.045);
+      setMobileCameraDistance(1.3);
+    };
+
+    const updateTabletViewport = () => {
+      const w = window.innerWidth;
+
+      if (w >= 768 && w <= 900) {
+        setTabletNameScale(0.58);
+        setTabletNameYOffset(0.06);
+        setTabletCameraDistance(1.12);
+        return;
+      }
+
+      if (w > 900 && w <= 1100) {
+        setTabletNameScale(0.68);
+        setTabletNameYOffset(0.1);
+        setTabletCameraDistance(1.06);
+        return;
+      }
+
+      if (w > 1100 && w <= 1280) {
+        setTabletNameScale(0.9);
+        setTabletNameYOffset(0.11);
+        setTabletCameraDistance(0.94);
+        return;
+      }
+
+      setTabletNameScale(1.5);
+      setTabletNameYOffset(0.065);
+      setTabletCameraDistance(0.72);
+    };
+
+    updateMobileViewport();
+    updateTabletViewport();
+    window.addEventListener('resize', updateMobileViewport);
+    window.addEventListener('resize', updateTabletViewport);
+    return () => {
+      window.removeEventListener('resize', updateMobileViewport);
+      window.removeEventListener('resize', updateTabletViewport);
+    };
+  }, []);
 
   return (
-    <main className="w-full min-h-screen md:h-screen text-white font-mono flex flex-col md:flex-row items-center md:justify-between px-4 py-6 md:p-0 md:overflow-hidden relative bg-black">
-
-      {/* Imagem de fundo */}
+    <main className="home-root w-full min-h-screen relative bg-black overflow-x-hidden overflow-y-auto">
       <Image
-        src="/Images/fundo-noturno.png" // substitua com o nome correto do arquivo
+        src="/Images/fundo-noturno.png"
         alt="Fundo noturno futurista"
         fill
-        className="object-cover w-full h-full absolute top-0 left-0 z-0 opacity-60"
+        className="object-cover absolute top-0 left-0 z-0 opacity-60"
         style={{
           objectFit: 'cover',
           WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
-          maskImage:      'linear-gradient(to bottom, black 80%, transparent 100%)',
+          maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
         }}
         sizes="100vw"
         quality={100}
-        loading="eager" // Carrega a imagem imediatamente para evitar atraso
+        loading="eager"
         priority
       />
-    
-      {/* Título no topo */}
-      <div className="w-full text-center z-20 md:absolute md:top-4">
-        <h1 className="text-3xl md:text-4xl font-bold text-[#00ffff] drop-shadow-[0_0_6px_#00ffff]">
-          Bem-vindo
-        </h1>
+
+      <div className="md:hidden relative z-10 w-full min-h-screen flex flex-col items-center px-4 pt-3 pb-8 gap-4">
+        <div className="w-full max-w-6xl" style={{ height: mobileSceneHeight }}>
+          <ThreeScene
+            modelPath="/models/name.glb"
+            redirectUrl="/ai"
+            scale={mobileNameScale}
+            nameYOffset={mobileNameYOffset}
+            cameraDistanceFactor={mobileCameraDistance}
+            containerClassName="relative w-full h-full pointer-events-auto"
+          />
+        </div>
+
+        <div className="w-full max-w-3xl flex flex-col gap-4">
+          <div className="flex items-center justify-center gap-6">
+            <Link
+              href="https://instagram.com/luigi.collesi/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-plain social-plain--mobile"
+            >
+              <FaInstagram className="social-tile__icon social-tile__icon--mobile" />
+              <span className="social-tile__label social-tile__label--mobile">@luigi.collesi</span>
+            </Link>
+            <Link
+              href="https://linkedin.com/in/luigi-collesi/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-plain social-plain--mobile"
+            >
+              <FaLinkedin className="social-tile__icon social-tile__icon--mobile" />
+              <span className="social-tile__label social-tile__label--mobile">luigi-collesi</span>
+            </Link>
+          </div>
+
+          <section className="intel-card rounded-2xl p-4">
+            <div className="intel-card__scan" />
+            <div className="intel-card__grid" />
+            <div className="relative z-10 flex flex-col gap-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[0.62rem] uppercase tracking-[0.24em] text-cyan-300/80">Neural Core</p>
+                  <h2 className="mt-1 text-xl font-bold text-cyan-100 drop-shadow-[0_0_10px_rgba(0,255,255,0.55)]">
+                    Interface IA
+                  </h2>
+                </div>
+                <span className="intel-badge">ONLINE</span>
+              </div>
+
+              <p className="text-cyan-100/80 text-sm leading-relaxed">
+                Plataforma imersiva com IA contextual e navegação guiada por experiência.
+              </p>
+
+              <div className="ia-card-microtags">
+                <span>IA</span>
+                <span>3D</span>
+                <span>Fullstack</span>
+              </div>
+
+              <div className="ia-card__action-row">
+                <p className="text-[0.62rem] text-cyan-200/75 tracking-[0.07em] uppercase">
+                  Clique na cabeça ou use o atalho
+                </p>
+                <Link href="/ai" className="intel-cta ia-card__cta inline-flex items-center justify-center rounded-md px-2 py-1 text-[10px] font-semibold text-cyan-100">
+                  IA
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="intel-card whatsapp-card-link rounded-2xl p-4 block"
+            aria-label="Conversar no WhatsApp sobre criação de plataforma web"
+          >
+            <div className="intel-card__scan" />
+            <div className="intel-card__grid" />
+            <div className="relative z-10 flex flex-col gap-4">
+              <div>
+                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-cyan-300/80">Future Build</p>
+                <h3 className="mt-1 text-xl font-bold text-cyan-100 drop-shadow-[0_0_10px_rgba(0,255,255,0.55)]">
+                  Transforme Sua Ideia em Plataforma Web
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2.5">
+                <div className="intel-pill">Da ideia ao produto real</div>
+                <div className="intel-pill">Desenvolvimento web sob medida</div>
+                <div className="intel-pill">Construção fullstack completa</div>
+                <div className="intel-pill">Evolução contínua com IA</div>
+              </div>
+
+              <p className="text-cyan-100/75 text-sm leading-relaxed">
+                Vamos tirar seu projeto do papel com uma plataforma web inteligente e levar sua visão para o futuro.
+              </p>
+            </div>
+          </a>
+        </div>
       </div>
 
-      {/* Cabeça 3D */}
-      <div className="w-full flex justify-center md:flex-1 md:items-center md:justify-center md:relative z-10">
-        <ThreeScene scale={0.5} redirectUrl='/info'/>
-      </div>
+      <div className="hidden md:block absolute inset-0 desktop-home-shell">
+        <div className="absolute inset-0 z-10">
+          <ThreeScene
+            modelPath="/models/name.glb"
+            redirectUrl="/ai"
+            scale={tabletNameScale}
+            nameYOffset={tabletNameYOffset}
+            cameraDistanceFactor={tabletCameraDistance}
+            containerClassName="relative w-full h-full pointer-events-auto"
+          />
+        </div>
 
-      {/* Texto de resposta */}
-      <div className="text-lg md:text-xl leading-relaxed text-[#00ffff] text-center max-w-lg md:absolute md:left-6 md:top-1/2 md:-translate-y-1/2 md:text-left md:max-w-xs z-10 md:max-h-screen md:overflow-y-auto">
-      {loading ? (
-          <p className="animate-pulse">…carregando resposta</p>
-        ) : typingAnswer ? (
-          <p>
-            {typingAnswer}
-            <span className="blink">|</span>
-          </p>
-        ) : (
-          <>
-            <p>Olá, tudo bem?</p>
-            <p>Fique à vontade para me perguntar algo sobre <strong>Luigi Collesi</strong>. Responderei tudo que eu souber.</p>
-          </>
-        )}
-      </div>
+        <div className="absolute inset-x-0 bottom-0 top-[50%] z-30 px-6 pb-6 desktop-panels-shell">
+          <div className="mx-auto h-full w-full max-w-7xl grid grid-cols-[1.25fr_0.95fr] gap-6">
+            <div className="h-full flex flex-col justify-end gap-4 min-h-0">
+              <div className="flex items-center justify-center gap-8">
+                <Link
+                  href="https://instagram.com/luigi.collesi/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-plain"
+                >
+                  <FaInstagram className="social-tile__icon" />
+                  <span className="social-tile__label">@luigi.collesi</span>
+                </Link>
+                <Link
+                  href="https://linkedin.com/in/luigi-collesi/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-plain"
+                >
+                  <FaLinkedin className="social-tile__icon" />
+                  <span className="social-tile__label">luigi-collesi</span>
+                </Link>
+              </div>
 
-      {/* Input e botão */}
-      <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-4 md:absolute md:bottom-6 md:left-1/2 md:-translate-x-1/2 z-20">
-        <input
-          type="text"
-          value={question}
-          onChange={e => setQuestion(e.target.value)}
-          placeholder="Digite sua pergunta..."
-          disabled={loading}
-          className={`flex-1 p-4 text-lg rounded-full bg-[#011f35] text-white placeholder-[#00ffff] border-2 border-[#00ffff] focus:outline-none focus:ring-2 focus:ring-[#00ffff] transition-all shadow-md shadow-[#00ffff]/20 ${
-            loading ? 'opacity-50 cursor-wait' : ''
-          }`}
-          onKeyDown={e => e.key === 'Enter' && sendQuestion()}
-        />
-        <button
-          onClick={sendQuestion}
-          disabled={loading}
-          className={`px-6 py-3 rounded-full bg-[#00ffff] text-[#001f3f] font-bold text-lg transition-all shadow-lg shadow-[#00ffff]/30 ${
-            loading ? 'opacity-50 cursor-wait' : 'hover:bg-[#00e6e6] cursor-pointer'
-          }`}
-        >
-          {loading ? 'Carregando...' : 'Enviar'}
-        </button>
-      </div>
+              <section className="intel-card intel-card--ia h-[50%] min-h-0 rounded-2xl p-5">
+                <div className="intel-card__scan" />
+                <div className="intel-card__grid" />
+                <div className="relative z-10 h-full ia-three-col">
+                  <div className="ia-col-left">
+                    <p className="text-[0.62rem] uppercase tracking-[0.28em] text-cyan-300/80">Neural Core</p>
+                    <h2 className="mt-1 text-[1.4rem] leading-tight font-bold text-cyan-100 drop-shadow-[0_0_10px_rgba(0,255,255,0.55)]">
+                      Interface IA
+                    </h2>
+                    <div className="mt-2 inline-flex items-center gap-2 rounded-md border border-cyan-400/35 bg-cyan-400/10 px-2 py-0.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_#00ffff]" />
+                      <span className="text-[0.56rem] text-cyan-100/85 tracking-[0.14em] uppercase">Assistente ativo</span>
+                    </div>
+                  </div>
 
-      {/* Links sociais */}
-      <div className="flex flex-col justify-center items-center gap-4 text-lg text-[#00ffff] mt-4 md:mt-0 md:absolute md:right-6 md:top-1/2 md:-translate-y-1/2 z-10">
-        <Link href="https://instagram.com/luigi.collesi/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00e6e6] transition-colors">
-          <FaInstagram size={24} /> <span className="font-semibold">Instagram</span>
-        </Link>
-        <Link href="https://linkedin.com/in/luigi-collesi/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00e6e6] transition-colors">
-          <FaLinkedin size={24} /> <span className="font-semibold">LinkedIn</span>
-        </Link>
-      </div>
+                  <div className="ia-col-middle">
+                    <div className="ia-card-body">
+                      <p className="text-cyan-100/80 text-[0.8rem] leading-relaxed max-w-[42ch]">
+                        IA contextual com experiência 3D para navegação rápida.
+                      </p>
+                      <div className="ia-card-microtags">
+                        <span>IA</span>
+                        <span>3D</span>
+                        <span>Fullstack</span>
+                      </div>
+                    </div>
 
-      <style jsx>{`
-        .blink {
-          animation: blink 1s steps(2, start) infinite;
-        }
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          50%, 100% { opacity: 0; }
-        }
-      `}</style>
+                    <div className="ia-card__action-row">
+                      <p className="text-[0.62rem] text-cyan-200/75 tracking-[0.07em] uppercase">
+                        Clique na cabeça ou use o atalho
+                      </p>
+                      <Link href="/ai" className="intel-cta ia-card__cta inline-flex items-center justify-center rounded-md px-2 py-1 text-[10px] font-semibold text-cyan-100">
+                        IA
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="ia-col-right">
+                    <div className="mini-head-box">
+                      <ThreeScene
+                        modelPath="/models/head.glb"
+                        redirectUrl="/ai"
+                        scale={0.48}
+                        containerClassName="relative w-full h-full pointer-events-auto"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="intel-card whatsapp-card-link rounded-2xl p-5 h-full min-h-0 block"
+              aria-label="Conversar no WhatsApp sobre criação de plataforma web"
+            >
+              <div className="intel-card__scan" />
+              <div className="intel-card__grid" />
+              <div className="relative z-10 h-full flex flex-col gap-4 justify-between">
+                <div>
+                  <p className="text-[0.68rem] uppercase tracking-[0.3em] text-cyan-300/80">Future Build</p>
+                  <h3 className="mt-1 text-2xl font-bold text-cyan-100 drop-shadow-[0_0_10px_rgba(0,255,255,0.55)]">
+                    Transforme Sua Ideia em Plataforma Web
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="intel-pill">Da ideia ao produto real</div>
+                  <div className="intel-pill">Desenvolvimento web sob medida</div>
+                  <div className="intel-pill">Construção fullstack completa</div>
+                  <div className="intel-pill">Evolução contínua com IA</div>
+                </div>
+
+                <p className="text-cyan-100/75 text-sm leading-relaxed">
+                  Se você quer tirar um projeto do papel, vamos construir juntos uma plataforma web inteligente e levar sua visão para o futuro.
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
