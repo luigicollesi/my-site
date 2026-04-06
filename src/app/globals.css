@@ -60,7 +60,7 @@ body {
   left: 0;
   right: 0;
   height: 250vh;
-  transform: translateZ(-1.2px) scale(2.4);
+  transform: translateZ(-5px) scale(8);
   background-image: url('/Images/fundo-port.png');
   background-size: cover;
   background-position: top;
@@ -76,7 +76,7 @@ body {
     height: 130vh;
     background-repeat: repeat;
     background-size: cover;
-    transform: translateZ(-3) scale(6);
+    transform: translateZ(-5px) scale(8);
     mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   }

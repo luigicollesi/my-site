@@ -37,8 +37,8 @@ export default function Home() {
                 <Section title="Formação Acadêmica e Idiomas">
                     <div className="space-y-6">
                         <TimelineItem
-                        title="Engenharia da Computação – 4º ano"
-                        institution="Instituto Mauá de Tecnologia"
+                        title="Engenharia da Computação – 4º ano (7º semestre)"
+                        institution="Instituto Mauá de Tecnologia, São Caetano do Sul"
                         period="2023 - Atual"
                         />
                         <TimelineItem
@@ -78,17 +78,17 @@ export default function Home() {
                         />
                         <TimelineItem
                           title="Estagiário no Departamento de Project Industry da ABB Brasil"
-                          institution="Suporte a projetos industriais e soluções de engenharia"
+                          institution="Atuação na área de Project Automation Project Industry, com automatização de processos de Project Management, planilhas de controladoria e organização de processos de instalação de placas elétricas em fábrica"
                           period="De outubro de 2025 a janeiro de 2026"
                         />
                         <TimelineItem
-                          title="Estagiário de QA na Engineering Brasil"
+                          title="Estagiário de SQA (Software Quality Assurance) na Engineering Brasil"
                           institution="Garantia de qualidade, testes e validação de software"
                           period="De março de 2026 até o momento"
                         />
                         <TimelineItem
-                          title="Experiências freelance em Desenvolvimento de Plataformas Web Inteligentes"
-                          institution="Projetos sob demanda com foco em automação, IA e experiência do usuário"
+                          title="Experiências freelance em desenvolvimento web"
+                          institution="Projetos de sites inteligentes e plataformas web de inovação"
                           period="Em paralelo às atividades profissionais"
                         />
                     </div>

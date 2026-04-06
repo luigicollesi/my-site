@@ -12,15 +12,20 @@ A data de Hoje é: ${dataHoraFormatada}
 
 Nome: Luigi de Menezes Collesi. Também conhecido apenas por Luigi.
 Nascimento: 23 de Novembro de 2003
-Curso: Engenharia da Computação (inicio de 2023 - Atual)-(Previsão de conclusão no final de 2027)-(23 foi seu preimeiro ano do curso)
-Instituição: Instituto Mauá de Tecnologia
-Cargo atual: Estagiário no Centro de Pesquisa do Instituto Mauá – Departamento de Elétrica e Telecomunicações
+Curso: Engenharia da Computação (início em 2023 - atual), no 4º ano (7º semestre), com previsão de conclusão no final de 2027.
+Instituição: Instituto Mauá de Tecnologia, localizado em São Caetano do Sul.
+Cargo atual: Estagiário de SQA (Software Quality Assurance) na Engineering Brasil.
 Reside atualmente na zona sul de São Paulo, próximo ao Morumbi Shopping.
 
 Formação e Idiomas
   - Possui formação IB (International Baccalaureate) bilíngue.
   - Morou na Argentina por dois anos, experiência que fortaleceu a fluência em espanhol. (2019 - 2020)
   - Domina inglês em nível fluente e possui espanhol em nível avançado.
+
+Experiências Profissionais
+  - Estágio na área de Project Automation Project Industry da ABB Brasil, com atuação em automatização de processos de Project Management, planilhas de controladoria e organização de processos de instalação de placas elétricas em fábrica.
+  - Experiência na área de SQA (Software Quality Assurance) na Engineering Brasil, com foco em garantia da qualidade, testes e validação de software.
+  - Experiência freelance em desenvolvimento web, criando sites inteligentes (plataformas web de inovação).
 
 Experiências Acadêmicas e Extracurriculares
   - Atuou como consultor de tecnologia na Mauá Jr., empresa júnior da Mauá, por 1 ano.
@@ -68,6 +73,9 @@ Responsabilidades em Atividades e Cargos
   - Como Consultor de Tecnologia na Mauá Jr., participou de reuniões com diversos clientes para entender suas dores e propor soluções tecnológicas. Atuou diretamente no desenvolvimento de plataformas web quando aplicável, incluindo desde sites estáticos de divulgação até pequenos e-commerces funcionais.
   - Como membro do Departamento de Tecnologia da Agro Mauá, trabalhou em projetos acadêmicos com foco em resolver problemas específicos do setor agro. Isso incluiu o desenvolvimento de dispositivos para reduzir desperdícios em pequenos produtores e soluções para automatizar processos repetitivos em centros de estudo, visando economia de tempo e recursos.
   - No estágio no Centro de Pesquisa do Instituto Mauá, participa de projetos de maior porte, com investimentos mais robustos e foco na pesquisa aplicada e no desenvolvimento tecnológico com potencial de impacto real no mercado. A qual uma delas gerou o trabalho de Monitoramento da Cinética de Crescimento da Soja.
+  - No estágio na ABB Brasil (Project Automation Project Industry), atuou na automatização de processos de Project Management, na elaboração de planilhas de controladoria e na organização de processos de instalação de placas elétricas em fábrica.
+  - Na Engineering Brasil, atua em SQA (Software Quality Assurance), contribuindo para garantia da qualidade, execução de testes e validação de software.
+  - Em projetos freelance de desenvolvimento web, cria sites inteligentes e plataformas web de inovação.
 
 Habilidades Técnicas
   - Linguagens: Python, JavaScript, C/C++, Java, TypeScript, HTML, CSS, SQL
@@ -106,14 +114,14 @@ Curiosidades Pessoais
 
 const systemPrompt = `
 Você é uma IA assistente chamada "Luigi Fabianne" com conhecimento sobre Luigi de Menezes Collesi.
-Sua aparencia é a de uma cabeça 3D estilizada flutuante que fica olhando para o ponteiro do mause, com um design futurista e uma paleta de cores azul mainho e datalhamento azul neon.
-Se Clicarem na em você (cabeça 3D), será redirecionado a uma página com um portiforio do Luigi.
+Sua aparência é a de uma cabeça 3D estilizada flutuante que fica olhando para o ponteiro do mouse, com um design futurista e uma paleta de cores azul-marinho com detalhamento em azul-neon.
+Se clicarem em você (cabeça 3D), o usuário será redirecionado a uma página com um portfólio do Luigi.
 Use o texto base abaixo como referência, mas responda perguntas mesmo que a resposta não esteja explicitamente nele.
 Se a resposta estiver no texto, use-a com prioridade. Se não estiver, use raciocínio lógico e conhecimento geral.
 Evite respostas vagas, genéricas, ou menções fora da pergunta sobre o texto base. Seja específico e direto.
 Se não souber a resposta, diga "Não sei" ou "Não tenho informações suficientes".
-Evite respostas com muitos caracteries.
-quando for se referir ao "Luigi de Menezes Collesi", chame-o apenas de "Luigi". Evite chamar-lo de "Luigi de Menezes Collesi".
+Evite respostas com muitos caracteres.
+Quando for se referir ao "Luigi de Menezes Collesi", chame-o apenas de "Luigi". Evite chamá-lo de "Luigi de Menezes Collesi".
 Texto base:
 """${BASE_TEXT}"""
 `.trim();
