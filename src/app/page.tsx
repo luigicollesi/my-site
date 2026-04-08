@@ -302,7 +302,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="relative z-10 h-full ia-three-col !hidden lg:grid">
+                <div className="relative z-10 h-full ia-three-col !hidden lg:!grid">
                   <div className="ia-col-left">
                     <p className="text-[0.62rem] uppercase tracking-[0.28em] text-cyan-300/80">Neural Core</p>
                     <h2 className="mt-1 text-[1.4rem] leading-tight font-bold text-cyan-100 drop-shadow-[0_0_10px_rgba(0,255,255,0.55)]">
