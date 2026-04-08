@@ -356,8 +356,10 @@ export default function ThreeScene({
           mouse.y = THREE.MathUtils.lerp(mouse.y, 0, 0.18);
         }
       } else {
-        mouse.x = (event.clientX / width - 0.5) * 2;
-        mouse.y = (event.clientY / height - 0.5) * 2;
+        const localX = (event.clientX - rect.left) / rect.width;
+        const localY = (event.clientY - rect.top) / rect.height;
+        mouse.x = (localX - 0.5) * 2;
+        mouse.y = (localY - 0.5) * 2;
       }
 
       if (!head) return;
@@ -403,8 +405,11 @@ export default function ThreeScene({
           mouse.x = (localX - 0.5) * 2;
           mouse.y = (localY - 0.5) * 2;
         } else {
-          mouse.x = (touch.clientX / width - 0.5) * 2;
-          mouse.y = (touch.clientY / height - 0.5) * 2;
+          const rect = mount.getBoundingClientRect();
+          const localX = (touch.clientX - rect.left) / rect.width;
+          const localY = (touch.clientY - rect.top) / rect.height;
+          mouse.x = (localX - 0.5) * 2;
+          mouse.y = (localY - 0.5) * 2;
         }
       }
     };

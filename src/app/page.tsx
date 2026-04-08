@@ -20,9 +20,16 @@ export default function Home() {
   const whatsappLink = `https://wa.me/5511988658728?text=${whatsappMessage}`;
 
   useEffect(() => {
+    const getLayoutViewport = () => {
+      const root = document.documentElement;
+      return {
+        w: root.clientWidth,
+        h: root.clientHeight,
+      };
+    };
+
     const updateMobileViewport = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      const { w, h } = getLayoutViewport();
 
       const targetHeight = Math.round(Math.min(Math.max(h * 0.5, 250), 420));
       setMobileSceneHeight(targetHeight);
@@ -54,7 +61,7 @@ export default function Home() {
     };
 
     const updateTabletViewport = () => {
-      const w = window.innerWidth;
+      const { w } = getLayoutViewport();
 
       if (w >= 768 && w <= 900) {
         setTabletNameScale(0.58);
@@ -223,7 +230,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 top-[50%] z-30 px-6 pb-6 desktop-panels-shell">
+        <div className="absolute inset-x-0 bottom-0 top-[44%] lg:top-[50%] z-30 px-6 pb-6 desktop-panels-shell">
           <div className="mx-auto h-full w-full max-w-7xl grid grid-cols-[1.25fr_0.95fr] gap-6">
             <div className="h-full flex flex-col justify-end gap-4 min-h-0">
               <div className="flex items-center justify-center gap-8">
@@ -250,7 +257,52 @@ export default function Home() {
               <section className="intel-card intel-card--ia h-[50%] min-h-0 rounded-2xl p-5">
                 <div className="intel-card__scan" />
                 <div className="intel-card__grid" />
-                <div className="relative z-10 h-full ia-three-col">
+                <div className="relative z-10 h-full hidden md:grid lg:hidden grid-cols-[minmax(0,1fr)_168px] items-center">
+                  <div className="min-w-0 flex flex-col justify-center">
+                    <div>
+                      <p className="text-[0.62rem] uppercase tracking-[0.24em] text-cyan-300/80">Neural Core</p>
+                      <h2 className="mt-1 text-xl font-bold text-cyan-100 drop-shadow-[0_0_10px_rgba(0,255,255,0.55)]">
+                        Interface IA
+                      </h2>
+                      <div className="mt-2 inline-flex items-center gap-2 rounded-md border border-cyan-400/35 bg-cyan-400/10 px-2 py-0.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_#00ffff]" />
+                        <span className="text-[0.56rem] text-cyan-100/85 tracking-[0.14em] uppercase">Assistente ativo</span>
+                      </div>
+                    </div>
+
+                    <p className="text-cyan-100/80 text-sm leading-relaxed">
+                      IA contextual com experiência 3D para navegação rápida.
+                    </p>
+
+                    <div className="ia-card-microtags">
+                      <span>IA</span>
+                      <span>3D</span>
+                      <span>Fullstack</span>
+                    </div>
+
+                    <div className="ia-card__action-row">
+                      <p className="text-[0.62rem] text-cyan-200/75 tracking-[0.07em] uppercase">
+                        Clique na cabeça ou use o atalho
+                      </p>
+                      <Link href="/ai" className="intel-cta ia-card__cta inline-flex items-center justify-center rounded-md px-2 py-1 text-[10px] font-semibold text-cyan-100">
+                        IA
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end">
+                    <div className="mini-head-box">
+                      <ThreeScene
+                        modelPath="/models/head.glb"
+                        redirectUrl="/ai"
+                        scale={0.48}
+                        containerClassName="relative w-full h-full pointer-events-auto"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative z-10 h-full ia-three-col !hidden lg:grid">
                   <div className="ia-col-left">
                     <p className="text-[0.62rem] uppercase tracking-[0.28em] text-cyan-300/80">Neural Core</p>
                     <h2 className="mt-1 text-[1.4rem] leading-tight font-bold text-cyan-100 drop-shadow-[0_0_10px_rgba(0,255,255,0.55)]">
@@ -302,7 +354,7 @@ export default function Home() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="intel-card whatsapp-card-link rounded-2xl p-5 h-full min-h-0 block"
+              className="intel-card whatsapp-card-link rounded-2xl p-5 h-full min-h-0 block self-end"
               aria-label="Conversar no WhatsApp sobre criação de plataforma web"
             >
               <div className="intel-card__scan" />

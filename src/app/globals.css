@@ -335,8 +335,8 @@ body {
   }
 }
 
-/* Exceção: telas largas porém baixas (ex.: celular em landscape). */
-@media (min-width: 768px) and (max-height: 560px) and (orientation: landscape) {
+/* Home desktop/tablet: sem bloqueios verticais e sem altura artificial extra. */
+@media (min-width: 768px) {
   .home-root {
     overflow-y: auto !important;
     overflow-x: hidden !important;
@@ -345,7 +345,7 @@ body {
 
   .desktop-home-shell {
     position: relative !important;
-    min-height: 145vh;
+    min-height: 100vh;
     height: auto !important;
     overflow: visible !important;
   }
@@ -355,7 +355,14 @@ body {
     top: auto !important;
     bottom: auto !important;
     inset-inline: 0;
-    padding-top: 50vh;
-    min-height: 90vh;
+    padding-top: 48vh;
+    min-height: 0;
+  }
+}
+
+/* Ajuste fino para md: sobe as colunas sem afetar lg+. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .desktop-panels-shell {
+    padding-top: 40vh;
   }
 }
