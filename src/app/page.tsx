@@ -21,10 +21,11 @@ export default function Home() {
 
   useEffect(() => {
     const getLayoutViewport = () => {
-      const root = document.documentElement;
+      const vv = window.visualViewport;
       return {
-        w: root.clientWidth,
-        h: root.clientHeight,
+        // Evita variação entre SOs causada por scrollbar/layout viewport.
+        w: Math.round(vv?.width ?? window.innerWidth),
+        h: Math.round(vv?.height ?? window.innerHeight),
       };
     };
 
@@ -230,7 +231,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 top-[44%] lg:top-[50%] z-30 px-6 pb-6 desktop-panels-shell">
+        <div className="absolute inset-x-0 bottom-0 z-30 px-6 pb-6 desktop-panels-shell">
           <div className="mx-auto h-full w-full max-w-7xl grid grid-cols-[1.25fr_0.95fr] gap-6">
             <div className="h-full flex flex-col justify-end gap-4 min-h-0">
               <div className="flex items-center justify-center gap-8">

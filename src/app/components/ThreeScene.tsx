@@ -166,7 +166,9 @@ export default function ThreeScene({
             const remainingMeshes = modelMeshes.length - meshIndex - 1;
             const remainingSlots = fragmentCount - allocated;
             const countForMesh = Math.max(1, Math.min(remainingSlots - remainingMeshes, proportional || 1));
-            const sampler = new MeshSurfaceSampler(mesh).build();
+            const samplerGeometry = mesh.geometry.index ? mesh.geometry.toNonIndexed() : null;
+            const samplerMesh = samplerGeometry ? new THREE.Mesh(samplerGeometry) : mesh;
+            const sampler = new MeshSurfaceSampler(samplerMesh).build();
 
             for (let i = 0; i < countForMesh; i += 1) {
               sampler.sample(samplePoint, sampleNormal);
@@ -184,6 +186,8 @@ export default function ThreeScene({
               fragmentSampleNormals.push(sampleNormalInHead);
               allocated += 1;
             }
+
+            samplerGeometry?.dispose();
           });
 
           const fragmentGeometry = new THREE.IcosahedronGeometry(fragmentBaseScale, 0);

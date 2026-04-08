@@ -363,6 +363,6 @@ body {
 /* Ajuste fino para md: sobe as colunas sem afetar lg+. */
 @media (min-width: 768px) and (max-width: 1023px) {
   .desktop-panels-shell {
-    padding-top: 40vh;
+    padding-top: calc(40vh + 5rem);
   }
 }
