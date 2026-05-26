@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 
 import { getAiConfig } from '@/lib/ai/config';
-import type { AiChatCompletionParams, AiChatCompletionResult, AiProviderClient } from '@/lib/ai/types';
+import type { AiChatCompletionResult, AiProviderChatCompletionParams, AiProviderClient } from '@/lib/ai/types';
 
 export function createOpenRouterClient(): AiProviderClient {
   const config = getAiConfig();
@@ -23,7 +23,7 @@ export function createOpenRouterClient(): AiProviderClient {
   });
 
   return {
-    async chatCompletion(params: AiChatCompletionParams): Promise<AiChatCompletionResult> {
+    async chatCompletion(params: AiProviderChatCompletionParams): Promise<AiChatCompletionResult> {
       const routing = config.openRouter.providerRouting;
       const provider =
         routing &&
@@ -42,7 +42,7 @@ export function createOpenRouterClient(): AiProviderClient {
           : undefined;
 
       const requestBody: Record<string, unknown> = {
-        model: config.model,
+        model: params.model,
         messages: params.messages,
         temperature: params.temperature,
         max_tokens: params.maxTokens,

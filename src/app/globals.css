@@ -326,6 +326,16 @@ body {
     inset 0 0 10px rgba(0, 180, 255, 0.14);
 }
 
+.name-scene-mobile {
+  height: clamp(250px, 50vh, 420px);
+}
+
+@supports (height: 100dvh) {
+  .name-scene-mobile {
+    height: clamp(250px, 50dvh, 420px);
+  }
+}
+
 @keyframes scanLine {
   0% {
     transform: translateY(-110%);

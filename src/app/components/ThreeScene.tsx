@@ -11,6 +11,9 @@ type ThreeSceneProps = {
   containerClassName?: string;
   nameYOffset?: number;
   cameraDistanceFactor?: number;
+  fitToContainer?: boolean;
+  fitPadding?: number;
+  screenYOffset?: number;
 };
 
 export default function ThreeScene({
@@ -20,6 +23,9 @@ export default function ThreeScene({
   containerClassName = 'relative w-full h-screen pointer-events-auto',
   nameYOffset,
   cameraDistanceFactor,
+  fitToContainer = false,
+  fitPadding = 0.86,
+  screenYOffset = 0,
 }: ThreeSceneProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState(false);
@@ -49,6 +55,7 @@ export default function ThreeScene({
 
     let head: THREE.Object3D | null = null;
     let interactTarget: THREE.Object3D | null = null;
+    let fittedModelSize: THREE.Vector3 | null = null;
     const mouse = { x: 0, y: 0 };
 
     // --- raycaster para hover/click ---
@@ -57,6 +64,34 @@ export default function ThreeScene({
 
     const isNameModel = modelPath.endsWith('name.glb');
     const isHeadModel = modelPath.endsWith('head.glb');
+    const viewSize = new THREE.Vector2();
+
+    const frameCamera = () => {
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
+
+      if (w <= 0 || h <= 0) return;
+
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+
+      if (fitToContainer && fittedModelSize && head) {
+        const fit = THREE.MathUtils.clamp(fitPadding, 0.1, 1);
+        const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+        const distanceByHeight = fittedModelSize.y / (2 * Math.tan(verticalFov / 2) * fit);
+        const distanceByWidth = fittedModelSize.x / (2 * Math.tan(verticalFov / 2) * camera.aspect * fit);
+        const distance = Math.max(distanceByHeight, distanceByWidth);
+
+        camera.position.set(0, 0, distance);
+        camera.getViewSize(distance, viewSize);
+        head.position.y = viewSize.y * screenYOffset;
+      } else if (head && isNameModel) {
+        head.position.y = nameYOffset ?? 0.065;
+      }
+
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
+      camera.updateProjectionMatrix();
+    };
 
     // Fragmentação exclusiva para name.glb
     const fragmentSamplePositions: THREE.Vector3[] = [];
@@ -89,15 +124,17 @@ export default function ThreeScene({
         // Recentraliza o pivô
         const box = new THREE.Box3().setFromObject(model);
         const center = new THREE.Vector3();
+        const size = box.getSize(new THREE.Vector3());
         box.getCenter(center);
         model.position.sub(center);
+        fittedModelSize = size.clone();
 
         // Grupo para rotação
         const pivot = new THREE.Group();
         pivot.add(model);
         if (isNameModel) {
-          // Sobe o modelo de nome para ficar mais alto na composição da home.
-          pivot.position.y = nameYOffset ?? 0.065;
+          // O offset final é recalculado por viewport em frameCamera().
+          pivot.position.y = fitToContainer ? 0 : nameYOffset ?? 0.065;
         }
         scene.add(pivot);
         head = pivot;
@@ -138,10 +175,13 @@ export default function ThreeScene({
         });
 
         // Centraliza a câmera
-        const size = box.getSize(new THREE.Vector3()).length();
-        const modelCameraDistanceFactor = cameraDistanceFactor ?? (isNameModel ? 0.72 : 1.2);
-        camera.position.set(0, 0, size * modelCameraDistanceFactor);
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        const modelDiameter = size.length();
+        if (!fitToContainer) {
+          const modelCameraDistanceFactor = cameraDistanceFactor ?? (isNameModel ? 0.72 : 1.2);
+          camera.position.set(0, 0, modelDiameter * modelCameraDistanceFactor);
+          camera.lookAt(new THREE.Vector3(0, 0, 0));
+        }
+        frameCamera();
 
         // Efeito de fragmentação local (exclusivo do name.glb)
         if (isNameModel && modelMeshes.length > 0 && head) {
@@ -152,9 +192,9 @@ export default function ThreeScene({
             return acc + (mesh.geometry.attributes.position?.count ?? 0);
           }, 0);
           const fragmentCount = 3000;
-          fragmentRadius = size * 0.05;
-          fragmentBurst = size * 0.1;
-          fragmentBaseScale = size * 0.08;
+          fragmentRadius = modelDiameter * 0.05;
+          fragmentBurst = modelDiameter * 0.1;
+          fragmentBaseScale = modelDiameter * 0.08;
 
           scene.updateMatrixWorld(true);
           headWorldInverse.copy(head.matrixWorld).invert();
@@ -424,11 +464,7 @@ export default function ThreeScene({
     }
 
     const handleResize = () => {
-      const w = mount.clientWidth;
-      const h = mount.clientHeight;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
+      frameCamera();
     };
     window.addEventListener('resize', handleResize);
 
@@ -470,7 +506,7 @@ export default function ThreeScene({
 
       mount.removeChild(renderer.domElement);
     };
-  }, [scale, modelPath]);
+  }, [cameraDistanceFactor, fitPadding, fitToContainer, modelPath, nameYOffset, scale, screenYOffset]);
 
   return (
     <div className={containerClassName} ref={mountRef}>

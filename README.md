@@ -27,10 +27,13 @@ This project uses a centralized AI backend layer with OpenRouter in `src/lib/ai/
 1. Copy `.env.example` to `.env`.
 2. Set:
    - `LLM_PROVIDER=openrouter`
-   - `LLM_MODEL=<your-openrouter-model>`
+   - `LLM_MODEL1=<your-primary-openrouter-model>`
+   - `LLM_MODEL2=<your-secondary-openrouter-model>`
+   - Optionally configure `LLM_MODEL3`, `LLM_MODEL4`, and `LLM_MODEL5`
    - `LLM_OPENROUTER_API_KEY=<your-openrouter-api-key>`
 3. Optional:
    - `LLM_DEBUG=true` for request/response debug logs (server-side only)
+   - When a configured model fails, it is skipped for 24 hours in the current server process and the next configured model is used
    - `LLM_OPENROUTER_APP_NAME` and `LLM_OPENROUTER_APP_URL` for OpenRouter attribution headers
    - Privacy/routing controls (helpful when you hit OpenRouter data-policy guardrails):
      - `LLM_OPENROUTER_DATA_COLLECTION=allow|deny`

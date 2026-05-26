@@ -3,102 +3,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaInstagram, FaLinkedin } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
 import ThreeScene from '@/app/components/ThreeScene';
 
 export default function Home() {
-  const [mobileSceneHeight, setMobileSceneHeight] = useState(320);
-  const [mobileNameScale, setMobileNameScale] = useState(1.02);
-  const [mobileNameYOffset, setMobileNameYOffset] = useState(0.03);
-  const [mobileCameraDistance, setMobileCameraDistance] = useState(0.84);
-  const [tabletNameScale, setTabletNameScale] = useState(1.5);
-  const [tabletNameYOffset, setTabletNameYOffset] = useState(0.065);
-  const [tabletCameraDistance, setTabletCameraDistance] = useState(0.72);
   const whatsappMessage = encodeURIComponent(
     'Olá, tudo bem? Tenho interesse em criar uma plataforma web e gostaria de conversar sobre escopo, prazo e orçamento.'
   );
   const whatsappLink = `https://wa.me/5511988658728?text=${whatsappMessage}`;
-
-  useEffect(() => {
-    const getLayoutViewport = () => {
-      const vv = window.visualViewport;
-      return {
-        // Evita variação entre SOs causada por scrollbar/layout viewport.
-        w: Math.round(vv?.width ?? window.innerWidth),
-        h: Math.round(vv?.height ?? window.innerHeight),
-      };
-    };
-
-    const updateMobileViewport = () => {
-      const { w, h } = getLayoutViewport();
-
-      const targetHeight = Math.round(Math.min(Math.max(h * 0.5, 250), 420));
-      setMobileSceneHeight(targetHeight);
-
-      if (w <= 360) {
-        setMobileNameScale(0.2);
-        setMobileNameYOffset(0.01);
-        setMobileCameraDistance(1.42);
-        return;
-      }
-
-      if (w <= 390) {
-        setMobileNameScale(0.23);
-        setMobileNameYOffset(0.02);
-        setMobileCameraDistance(1.38);
-        return;
-      }
-
-      if (w <= 430) {
-        setMobileNameScale(0.28);
-        setMobileNameYOffset(0.03);
-        setMobileCameraDistance(1.34);
-        return;
-      }
-
-      setMobileNameScale(0.33);
-      setMobileNameYOffset(0.045);
-      setMobileCameraDistance(1.3);
-    };
-
-    const updateTabletViewport = () => {
-      const { w } = getLayoutViewport();
-
-      if (w >= 768 && w <= 900) {
-        setTabletNameScale(0.58);
-        setTabletNameYOffset(0.06);
-        setTabletCameraDistance(1.12);
-        return;
-      }
-
-      if (w > 900 && w <= 1100) {
-        setTabletNameScale(0.68);
-        setTabletNameYOffset(0.1);
-        setTabletCameraDistance(1.06);
-        return;
-      }
-
-      if (w > 1100 && w <= 1280) {
-        setTabletNameScale(0.9);
-        setTabletNameYOffset(0.11);
-        setTabletCameraDistance(0.94);
-        return;
-      }
-
-      setTabletNameScale(1.5);
-      setTabletNameYOffset(0.065);
-      setTabletCameraDistance(0.72);
-    };
-
-    updateMobileViewport();
-    updateTabletViewport();
-    window.addEventListener('resize', updateMobileViewport);
-    window.addEventListener('resize', updateTabletViewport);
-    return () => {
-      window.removeEventListener('resize', updateMobileViewport);
-      window.removeEventListener('resize', updateTabletViewport);
-    };
-  }, []);
 
   return (
     <main className="home-root w-full min-h-screen relative bg-black overflow-x-hidden overflow-y-auto">
@@ -119,13 +30,14 @@ export default function Home() {
       />
 
       <div className="md:hidden relative z-10 w-full min-h-screen flex flex-col items-center px-4 pt-3 pb-8 gap-4">
-        <div className="w-full max-w-6xl" style={{ height: mobileSceneHeight }}>
+        <div className="name-scene-mobile w-full max-w-6xl">
           <ThreeScene
             modelPath="/models/name.glb"
             redirectUrl="/ai"
-            scale={mobileNameScale}
-            nameYOffset={mobileNameYOffset}
-            cameraDistanceFactor={mobileCameraDistance}
+            scale={1}
+            fitToContainer
+            fitPadding={0.88}
+            screenYOffset={0.04}
             containerClassName="relative w-full h-full pointer-events-auto"
           />
         </div>
@@ -224,9 +136,10 @@ export default function Home() {
           <ThreeScene
             modelPath="/models/name.glb"
             redirectUrl="/ai"
-            scale={tabletNameScale}
-            nameYOffset={tabletNameYOffset}
-            cameraDistanceFactor={tabletCameraDistance}
+            scale={1}
+            fitToContainer
+            fitPadding={0.86}
+            screenYOffset={0.16}
             containerClassName="relative w-full h-full pointer-events-auto"
           />
         </div>

@@ -13,13 +13,17 @@ export type AiChatCompletionParams = {
   maxTokens?: number;
 };
 
+export type AiProviderChatCompletionParams = AiChatCompletionParams & {
+  model: string;
+};
+
 export type AiChatCompletionResult = {
   text: string;
   raw: unknown;
 };
 
 export type AiProviderClient = {
-  chatCompletion(params: AiChatCompletionParams): Promise<AiChatCompletionResult>;
+  chatCompletion(params: AiProviderChatCompletionParams): Promise<AiChatCompletionResult>;
 };
 
 export type OpenRouterConfig = {
@@ -38,7 +42,7 @@ export type OpenRouterConfig = {
 
 export type AiConfig = {
   provider: LlmProvider;
-  model: string;
+  models: string[];
   debug: boolean;
   openRouter: OpenRouterConfig;
 };
