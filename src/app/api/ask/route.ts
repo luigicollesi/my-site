@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { chatCompletion } from '@/lib/ai';
+import { AiModelsUnavailableError } from '@/lib/ai/errors';
 
 const now = new Date();
 const dataHoraFormatada = now.toLocaleString('pt-BR', {
@@ -155,6 +156,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ answer });
   } catch (err: unknown) {
+    if (err instanceof AiModelsUnavailableError) {
+      console.error('Erro no endpoint /api/ask:', err.message, err.failures);
+
+      const message =
+        err.status === 429
+          ? 'Os modelos de IA atingiram limite de uso no momento. Tente novamente mais tarde.'
+          : 'Os modelos de IA estão temporariamente indisponíveis. Tente novamente em alguns minutos.';
+
+      return NextResponse.json({ error: message }, { status: err.status });
+    }
+
     if (err instanceof Error) {
         console.error('Erro no endpoint /api/ask:', err.message);
         const isPrivacyGuardrailError =

@@ -326,6 +326,56 @@ body {
     inset 0 0 10px rgba(0, 180, 255, 0.14);
 }
 
+.ai-page {
+  overflow-y: auto;
+}
+
+.ai-head-stage {
+  flex: 0 0 auto;
+  min-height: 100vh;
+}
+
+.ai-question-bar {
+  flex: 0 0 auto;
+}
+
+.ai-answer-panel {
+  width: 100%;
+  flex: 0 0 auto;
+  max-height: 34vh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  padding-inline: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+@supports (height: 100svh) {
+  .ai-head-stage {
+    min-height: 100svh;
+  }
+
+  .ai-answer-panel {
+    max-height: 34svh;
+  }
+}
+
+@media (min-width: 768px) {
+  .ai-page {
+    overflow: hidden;
+  }
+
+  .ai-head-stage {
+    flex: 1 1 0%;
+    min-height: 0;
+  }
+
+  .ai-answer-panel {
+    width: auto;
+    max-height: 100vh;
+    padding: 0;
+  }
+}
+
 .name-scene-mobile {
   height: clamp(250px, 50vh, 420px);
 }

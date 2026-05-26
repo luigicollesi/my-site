@@ -1,5 +1,6 @@
 import { getAiClient } from '@/lib/ai/client';
 import { getAiConfig } from '@/lib/ai/config';
+import { AiModelsUnavailableError, getErrorMessage, getErrorStatus, type AiModelFailure } from '@/lib/ai/errors';
 import type { AiChatCompletionParams, AiChatCompletionResult } from '@/lib/ai/types';
 
 const MODEL_STANDOFF_MS = 24 * 60 * 60 * 1000;
@@ -21,10 +22,10 @@ export async function chatCompletion(params: AiChatCompletionParams): Promise<Ai
   const models = getAvailableModels(config.models, now);
 
   if (!models.length) {
-    throw new Error('Todos os modelos LLM configurados estão em stand off de 24 horas.');
+    throw new AiModelsUnavailableError('Todos os modelos LLM configurados estão em stand off de 24 horas.');
   }
 
-  const errors: Array<{ model: string; error: unknown }> = [];
+  const failures: AiModelFailure[] = [];
 
   for (const model of models) {
     if (config.debug) {
@@ -43,7 +44,11 @@ export async function chatCompletion(params: AiChatCompletionParams): Promise<Ai
     } catch (error) {
       const failedAt = Date.now();
       putModelInStandoff(model, failedAt);
-      errors.push({ model, error });
+      failures.push({
+        model,
+        status: getErrorStatus(error),
+        message: getErrorMessage(error),
+      });
 
       if (config.debug) {
         const standoffUntil = new Date(failedAt + MODEL_STANDOFF_MS).toISOString();
@@ -52,5 +57,13 @@ export async function chatCompletion(params: AiChatCompletionParams): Promise<Ai
     }
   }
 
-  throw new Error(`Todos os modelos LLM disponíveis falharam: ${errors.map(({ model }) => model).join(', ')}`);
+  const allRateLimited = failures.length > 0 && failures.every((failure) => failure.status === 429);
+  const hasRateLimit = failures.some((failure) => failure.status === 429);
+  const status = allRateLimited ? 429 : hasRateLimit ? 503 : 502;
+
+  throw new AiModelsUnavailableError(
+    `Todos os modelos LLM disponíveis falharam: ${failures.map(({ model }) => model).join(', ')}`,
+    failures,
+    status,
+  );
 }

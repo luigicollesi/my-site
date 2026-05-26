@@ -23,7 +23,7 @@ export default function Home() {
         body: JSON.stringify({ question }),
       });
       const json = await res.json();
-      const text: string = json.answer || 'Desculpe, não consegui responder.';
+      const text: string = json.answer || json.error || 'Desculpe, não consegui responder.';
       if (json.answer) {
         setQuestion(''); // Limpa o campo de pergunta
       }
@@ -47,7 +47,7 @@ export default function Home() {
   }, [fullAnswer]);
 
   return (
-    <main className="w-full min-h-screen md:h-screen text-white font-mono flex flex-col md:flex-row items-center md:justify-between px-4 py-6 md:p-0 md:overflow-hidden relative bg-black">
+    <main className="ai-page w-full min-h-screen md:h-screen text-white font-mono flex flex-col md:flex-row items-center md:justify-between px-4 py-6 md:p-0 md:overflow-hidden relative bg-black">
 
       {/* Imagem de fundo */}
       <Image
@@ -74,12 +74,12 @@ export default function Home() {
       </div>
 
       {/* Cabeça 3D */}
-      <div className="w-full flex justify-center md:flex-1 md:items-center md:justify-center md:relative z-10">
-        <ThreeScene scale={0.5} redirectUrl='/info'/>
+      <div className="ai-head-stage w-full flex justify-center md:flex-1 md:items-center md:justify-center md:relative z-10">
+        <ThreeScene scale={0.5} redirectUrl="/info" />
       </div>
 
       {/* Texto de resposta */}
-      <div className="text-lg md:text-xl leading-relaxed text-[#00ffff] text-center max-w-lg md:absolute md:left-6 md:top-1/2 md:-translate-y-1/2 md:text-left md:max-w-xs z-10 md:max-h-screen md:overflow-y-auto">
+      <div className="ai-answer-panel text-lg md:text-xl leading-relaxed text-[#00ffff] text-center max-w-lg md:absolute md:left-6 md:top-1/2 md:-translate-y-1/2 md:text-left md:max-w-xs z-10 md:max-h-screen md:overflow-y-auto">
       {loading ? (
           <p className="animate-pulse">…carregando resposta</p>
         ) : typingAnswer ? (
@@ -96,7 +96,7 @@ export default function Home() {
       </div>
 
       {/* Input e botão */}
-      <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-4 md:absolute md:bottom-6 md:left-1/2 md:-translate-x-1/2 z-20">
+      <div className="ai-question-bar w-full max-w-2xl flex flex-col sm:flex-row gap-4 md:absolute md:bottom-6 md:left-1/2 md:-translate-x-1/2 z-20">
         <input
           type="text"
           value={question}

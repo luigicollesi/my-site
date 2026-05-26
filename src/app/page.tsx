@@ -139,7 +139,7 @@ export default function Home() {
             scale={1}
             fitToContainer
             fitPadding={0.86}
-            screenYOffset={0.16}
+            screenYOffset={0.22}
             containerClassName="relative w-full h-full pointer-events-auto"
           />
         </div>
