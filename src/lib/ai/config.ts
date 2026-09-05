@@ -1,8 +1,6 @@
 import type { AiConfig, LlmProvider } from '@/lib/ai/types';
 
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
-const DEFAULT_MODEL = 'openai/gpt-4o-mini';
-const MAX_LLM_MODELS = 5;
 
 function isTruthy(value?: string): boolean {
   if (!value) return false;
@@ -52,14 +50,6 @@ function parseProvider(rawProvider?: string): LlmProvider {
   return provider;
 }
 
-function parseModels(): string[] {
-  const models = Array.from({ length: MAX_LLM_MODELS }, (_, index) =>
-    process.env[`LLM_MODEL${index + 1}`]?.trim(),
-  ).filter((model): model is string => Boolean(model));
-
-  return models.length ? models : [DEFAULT_MODEL];
-}
-
 let cachedConfig: AiConfig | null = null;
 
 export function getAiConfig(): AiConfig {
@@ -71,7 +61,6 @@ export function getAiConfig(): AiConfig {
 
   cachedConfig = {
     provider,
-    models: parseModels(),
     debug: isTruthy(process.env.LLM_DEBUG),
     openRouter: {
       apiKey: requireEnv('LLM_OPENROUTER_API_KEY'),

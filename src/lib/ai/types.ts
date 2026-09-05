@@ -42,7 +42,6 @@ export type OpenRouterConfig = {
 
 export type AiConfig = {
   provider: LlmProvider;
-  models: string[];
   debug: boolean;
   openRouter: OpenRouterConfig;
 };
