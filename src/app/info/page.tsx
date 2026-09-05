@@ -262,40 +262,47 @@ export default function InfoPage() {
             </Section>
 
             <Section title="Formação e idiomas">
-              <div className="grid gap-8 md:grid-cols-2">
-                <div className="space-y-6">
-                  <TimelineItem
-                    title="Engenharia da Computação — 4º ano / 7º semestre"
-                    institution="Instituto Mauá de Tecnologia"
-                    period="2023 - atual · conclusão prevista para o fim de 2027"
-                  />
-                  <TimelineItem
-                    title="International Baccalaureate (IB)"
-                    institution="Diploma internacional de ensino"
-                    period="Concluído"
-                  />
-                  <TimelineItem
-                    title="Ensino Médio"
-                    institution="Escola Bilíngue Pueri Domus"
-                    period="2021 - 2022"
-                  />
-                  <TimelineItem
-                    title="Ensino Médio — Argentina"
-                    institution="Asociación Escuelas Lincoln"
-                    period="2019 - 2020"
-                  />
-                  <TimelineItem
-                    title="Ensino Fundamental"
-                    institution="Humboldt Schule"
-                    period="2011 - 2018"
-                  />
+              <div className="grid gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)] lg:items-start">
+                <div>
+                  <p className="mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-600">Formação</p>
+                  <div className="space-y-6">
+                    <TimelineItem
+                      title="Engenharia da Computação"
+                      institution="Instituto Mauá de Tecnologia · 4º ano / 7º semestre"
+                      period="2023 - atual"
+                      details={['Conclusão prevista para o fim de 2027.']}
+                    />
+                    <TimelineItem
+                      title="International Baccalaureate (IB)"
+                      institution="Diploma internacional de ensino"
+                      period="Concluído"
+                    />
+                    <TimelineItem
+                      title="Ensino Médio"
+                      institution="Escola Bilíngue Pueri Domus"
+                      period="2021 - 2022"
+                    />
+                    <TimelineItem
+                      title="Ensino Médio — Argentina"
+                      institution="Asociación Escuelas Lincoln"
+                      period="2019 - 2020"
+                    />
+                    <TimelineItem
+                      title="Ensino Fundamental"
+                      institution="Humboldt Schule"
+                      period="2011 - 2018"
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <InfoCard title="Português" text="Nativo" />
-                  <InfoCard title="Inglês" text="Fluente" />
-                  <InfoCard title="Espanhol" text="Avançado" />
-                  <InfoCard title="Alemão" text="Básico" />
+                <div>
+                  <p className="mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-600">Idiomas</p>
+                  <div className="grid grid-cols-2 gap-4 lg:grid-cols-1 xl:grid-cols-2">
+                    <InfoCard title="Português" text="Nativo" />
+                    <InfoCard title="Inglês" text="Fluente" />
+                    <InfoCard title="Espanhol" text="Avançado" />
+                    <InfoCard title="Alemão" text="Básico" />
+                  </div>
                 </div>
               </div>
             </Section>
@@ -351,7 +358,7 @@ function TimelineItem({
     <article className="border-l-2 border-cyan-400 pl-5 relative">
       <div className="absolute left-[-9px] top-1.5 w-4 h-4 bg-cyan-400 rounded-full shadow-md" />
       <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-5">
-        <div>
+        <div className="min-w-0">
           <h3 className="text-lg font-semibold text-cyan-300">{title}</h3>
           <p className="text-sm sm:text-base text-gray-300">{institution}</p>
         </div>
