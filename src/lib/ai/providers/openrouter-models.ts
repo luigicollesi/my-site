@@ -1,7 +1,10 @@
 import { getAiConfig } from '@/lib/ai/config';
 
 const MODEL_CATALOG_CACHE_MS = 15 * 60 * 1000;
+const MODEL_CATALOG_FAILURE_CACHE_MS = 60 * 1000;
+const MODEL_CATALOG_TIMEOUT_MS = 5000;
 const FREE_ROUTER_MODEL = 'openrouter/free';
+const REQUIRED_PARAMETERS = ['temperature', 'max_tokens'];
 
 type OpenRouterModel = {
   id?: string;
@@ -14,6 +17,7 @@ type OpenRouterModel = {
     completion?: string;
     request?: string;
   };
+  supported_parameters?: string[];
   expiration_date?: string | null;
 };
 
@@ -43,6 +47,11 @@ function isExpired(expirationDate?: string | null): boolean {
   return Number.isFinite(expiresAt) && expiresAt <= Date.now();
 }
 
+function supportsRequiredParameters(model: OpenRouterModel): boolean {
+  const supported = model.supported_parameters ?? [];
+  return REQUIRED_PARAMETERS.every((parameter) => supported.includes(parameter));
+}
+
 function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModel & { id: string } {
   const inputModalities = model.architecture?.input_modalities ?? [];
   const outputModalities = model.architecture?.output_modalities ?? [];
@@ -52,6 +61,7 @@ function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModel & { i
       model.id !== FREE_ROUTER_MODEL &&
       inputModalities.includes('text') &&
       outputModalities.includes('text') &&
+      supportsRequiredParameters(model) &&
       isZeroPrice(model.pricing?.prompt, true) &&
       isZeroPrice(model.pricing?.completion, true) &&
       isZeroPrice(model.pricing?.request) &&
@@ -66,6 +76,7 @@ async function fetchFreeTextModels(): Promise<string[]> {
 
   url.searchParams.set('input_modalities', 'text');
   url.searchParams.set('output_modalities', 'text');
+  url.searchParams.set('supported_parameters', REQUIRED_PARAMETERS.join(','));
   url.searchParams.set('max_price', '0');
   url.searchParams.set('sort', 'most-popular');
 
@@ -86,6 +97,7 @@ async function fetchFreeTextModels(): Promise<string[]> {
     method: 'GET',
     headers,
     cache: 'no-store',
+    signal: AbortSignal.timeout(MODEL_CATALOG_TIMEOUT_MS),
   });
 
   if (!response.ok) {
@@ -130,5 +142,10 @@ export async function getFreeTextModels(): Promise<string[]> {
   // Fallback oficial do OpenRouter: continua gratuito e escolhe um modelo
   // compatível com as características da requisição quando o catálogo não
   // puder ser consultado temporariamente.
-  return [FREE_ROUTER_MODEL];
+  cachedCatalog = {
+    expiresAt: now + MODEL_CATALOG_FAILURE_CACHE_MS,
+    models: [FREE_ROUTER_MODEL],
+  };
+
+  return cachedCatalog.models;
 }
