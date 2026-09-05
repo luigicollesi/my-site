@@ -2,9 +2,58 @@
 
 import ThreeScene from '@/app/components/ThreeScene';
 import { FaHome, FaInstagram, FaLinkedin } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+
+function renderInlineMarkdown(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  const lines = text.split('\n');
+  const tokenPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*]+)\*\*/g;
+
+  lines.forEach((line, lineIndex) => {
+    let cursor = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = tokenPattern.exec(line)) !== null) {
+      if (match.index > cursor) {
+        nodes.push(line.slice(cursor, match.index));
+      }
+
+      if (match[1] && match[2]) {
+        nodes.push(
+          <a
+            key={`link-${lineIndex}-${match.index}`}
+            href={match[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold underline underline-offset-4 hover:text-white transition-colors"
+          >
+            {match[1]}
+          </a>,
+        );
+      } else if (match[3]) {
+        nodes.push(
+          <strong key={`bold-${lineIndex}-${match.index}`} className="font-bold text-white">
+            {match[3]}
+          </strong>,
+        );
+      }
+
+      cursor = match.index + match[0].length;
+    }
+
+    if (cursor < line.length) {
+      nodes.push(line.slice(cursor));
+    }
+
+    if (lineIndex < lines.length - 1) {
+      nodes.push(<br key={`br-${lineIndex}`} />);
+    }
+  });
+
+  return nodes;
+}
 
 export default function Home() {
   const [question, setQuestion] = useState('');
@@ -25,7 +74,7 @@ export default function Home() {
       const json = await res.json();
       const text: string = json.answer || json.error || 'Desculpe, não consegui responder.';
       if (json.answer) {
-        setQuestion(''); // Limpa o campo de pergunta
+        setQuestion('');
       }
       setFullAnswer(text);
     } catch {
@@ -35,7 +84,6 @@ export default function Home() {
     }
   };
 
-  // Efeito de digitação (typewriter)
   useEffect(() => {
     if (!fullAnswer) return;
     let i = 0;
@@ -48,54 +96,50 @@ export default function Home() {
 
   return (
     <main className="ai-page w-full min-h-screen md:h-screen text-white font-mono flex flex-col md:flex-row items-center md:justify-between px-4 py-6 md:p-0 md:overflow-hidden relative bg-black">
-
-      {/* Imagem de fundo */}
       <Image
-        src="/Images/fundo-noturno.png" // substitua com o nome correto do arquivo
+        src="/Images/fundo-noturno.png"
         alt="Fundo noturno futurista"
         fill
         className="object-cover w-full h-full absolute top-0 left-0 z-0 opacity-60"
         style={{
           objectFit: 'cover',
           WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
-          maskImage:      'linear-gradient(to bottom, black 80%, transparent 100%)',
+          maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
         }}
         sizes="100vw"
         quality={100}
-        loading="eager" // Carrega a imagem imediatamente para evitar atraso
+        loading="eager"
         priority
       />
-    
-      {/* Título no topo */}
+
       <div className="w-full text-center z-20 md:absolute md:top-4">
         <h1 className="text-3xl md:text-4xl font-bold text-[#00ffff] drop-shadow-[0_0_6px_#00ffff]">
           Bem-vindo
         </h1>
       </div>
 
-      {/* Cabeça 3D */}
       <div className="ai-head-stage w-full flex justify-center md:flex-1 md:items-center md:justify-center md:relative z-10">
         <ThreeScene scale={0.5} redirectUrl="/info" />
       </div>
 
-      {/* Texto de resposta */}
       <div className="ai-answer-panel text-lg md:text-xl leading-relaxed text-[#00ffff] text-center max-w-lg md:absolute md:left-6 md:top-1/2 md:-translate-y-1/2 md:text-left md:max-w-xs z-10 md:max-h-screen md:overflow-y-auto">
-      {loading ? (
+        {loading ? (
           <p className="animate-pulse">…carregando resposta</p>
         ) : typingAnswer ? (
           <p>
-            {typingAnswer}
+            {renderInlineMarkdown(typingAnswer)}
             <span className="blink">|</span>
           </p>
         ) : (
           <>
             <p>Olá, tudo bem?</p>
-            <p>Fique à vontade para me perguntar algo sobre <strong>Luigi Collesi</strong>. Responderei tudo que eu souber.</p>
+            <p>
+              Fique à vontade para me perguntar algo sobre <strong>Luigi Collesi</strong>. Responderei tudo que eu souber.
+            </p>
           </>
         )}
       </div>
 
-      {/* Input e botão */}
       <div className="ai-question-bar w-full max-w-2xl flex flex-col sm:flex-row gap-4 md:absolute md:bottom-6 md:left-1/2 md:-translate-x-1/2 z-20">
         <input
           type="text"
@@ -119,7 +163,6 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Links sociais */}
       <div className="flex flex-col justify-center items-center gap-4 text-lg text-[#00ffff] mt-4 md:mt-0 md:absolute md:right-6 md:top-1/2 md:-translate-y-1/2 z-10">
         <Link href="/" className="flex items-center gap-2 hover:text-[#00e6e6] transition-colors">
           <FaHome size={24} /> <span className="font-semibold">Home</span>
