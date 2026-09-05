@@ -24,23 +24,37 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 This project uses a centralized AI backend layer with OpenRouter in `src/lib/ai/*`.
 
-1. Copy `.env.example` to `.env`.
-2. Set:
-   - `LLM_PROVIDER=openrouter`
-   - `LLM_MODEL1=<your-primary-openrouter-model>`
-   - `LLM_MODEL2=<your-secondary-openrouter-model>`
-   - Optionally configure `LLM_MODEL3`, `LLM_MODEL4`, and `LLM_MODEL5`
-   - `LLM_OPENROUTER_API_KEY=<your-openrouter-api-key>`
-3. Optional:
-   - `LLM_DEBUG=true` for request/response debug logs (server-side only)
-   - When a configured model fails, it is skipped for 24 hours in the current server process and the next configured model is used
-   - `LLM_OPENROUTER_APP_NAME` and `LLM_OPENROUTER_APP_URL` for OpenRouter attribution headers
-   - Privacy/routing controls (helpful when you hit OpenRouter data-policy guardrails):
-     - `LLM_OPENROUTER_DATA_COLLECTION=allow|deny`
-     - `LLM_OPENROUTER_ZDR=true|false`
-     - `LLM_OPENROUTER_ALLOW_FALLBACKS=true|false`
-     - `LLM_OPENROUTER_ONLY=<csv providers>`
-     - `LLM_OPENROUTER_IGNORE=<csv providers>`
+The application no longer depends on a model selected through environment variables. Before generating a response, the server queries the OpenRouter model catalog and keeps only models that:
+
+- accept `text` input;
+- return `text` output;
+- have zero prompt, completion and request cost;
+- support the parameters currently used by the chat flow.
+
+The catalog is cached for 15 minutes. Models that fail during completion are temporarily skipped for 24 hours in the current server process and the next free compatible model is tried. Each request attempts at most five models to avoid consuming the free request quota during broader OpenRouter/provider outages.
+
+If the model catalog cannot be reached and there is no cached catalog, the application falls back to the official `openrouter/free` router until discovery is available again.
+
+Create a `.env.local` file and configure at least:
+
+```env
+LLM_OPENROUTER_API_KEY=<your-openrouter-api-key>
+```
+
+`LLM_PROVIDER=openrouter` can still be set explicitly, but OpenRouter is already the default and only supported provider.
+
+Optional settings:
+
+- `LLM_DEBUG=true` for request/response and model-discovery logs (server-side only)
+- `LLM_OPENROUTER_APP_NAME` and `LLM_OPENROUTER_APP_URL` for OpenRouter attribution headers
+- Privacy/routing controls:
+  - `LLM_OPENROUTER_DATA_COLLECTION=allow|deny`
+  - `LLM_OPENROUTER_ZDR=true|false`
+  - `LLM_OPENROUTER_ALLOW_FALLBACKS=true|false`
+  - `LLM_OPENROUTER_ONLY=<csv providers>`
+  - `LLM_OPENROUTER_IGNORE=<csv providers>`
+
+`LLM_MODEL1`, `LLM_MODEL2` and the previous fixed-model variables are no longer used.
 
 Install dependencies manually:
 
