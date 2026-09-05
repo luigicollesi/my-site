@@ -1,9 +1,11 @@
 import { getAiClient } from '@/lib/ai/client';
 import { getAiConfig } from '@/lib/ai/config';
 import { AiModelsUnavailableError, getErrorMessage, getErrorStatus, type AiModelFailure } from '@/lib/ai/errors';
+import { getFreeTextModels } from '@/lib/ai/providers/openrouter-models';
 import type { AiChatCompletionParams, AiChatCompletionResult } from '@/lib/ai/types';
 
 const MODEL_STANDOFF_MS = 24 * 60 * 60 * 1000;
+const MAX_MODELS_PER_REQUEST = 5;
 
 const modelStandoffUntil = new Map<string, number>();
 
@@ -19,10 +21,20 @@ export async function chatCompletion(params: AiChatCompletionParams): Promise<Ai
   const config = getAiConfig();
   const client = getAiClient();
   const now = Date.now();
-  const models = getAvailableModels(config.models, now);
+  const discoveredModels = await getFreeTextModels();
+  const models = getAvailableModels(discoveredModels, now).slice(0, MAX_MODELS_PER_REQUEST);
 
   if (!models.length) {
-    throw new AiModelsUnavailableError('Todos os modelos LLM configurados estão em stand off de 24 horas.');
+    throw new AiModelsUnavailableError(
+      'Os modelos gratuitos text-to-text disponíveis estão temporariamente em stand off.',
+    );
+  }
+
+  if (config.debug) {
+    console.debug(
+      `[AI][models] discovered=${discoveredModels.length} available=${models.length}`,
+      models,
+    );
   }
 
   const failures: AiModelFailure[] = [];
@@ -62,7 +74,7 @@ export async function chatCompletion(params: AiChatCompletionParams): Promise<Ai
   const status = allRateLimited ? 429 : hasRateLimit ? 503 : 502;
 
   throw new AiModelsUnavailableError(
-    `Todos os modelos LLM disponíveis falharam: ${failures.map(({ model }) => model).join(', ')}`,
+    `Os modelos gratuitos tentados falharam: ${failures.map(({ model }) => model).join(', ')}`,
     failures,
     status,
   );
