@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaEnvelope, FaLinkedin } from 'react-icons/fa';
+import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const experiences = [
   {
@@ -68,25 +68,55 @@ const projects = [
     title: 'Portal Escarlate',
     subtitle: 'Portal de Notícias Inteligente',
     description:
-      'Portal que pesquisa, sintetiza e resume notícias de diferentes portais brasileiros, combinando coleta, curadoria, automação e IA para organizar múltiplas fontes em conteúdo acessível.',
+      'Portal que pesquisa, sintetiza e resume notícias de diferentes portais brasileiros, combinando coleta, curadoria, automação e IA.',
   },
   {
     title: 'Detecção de EPIs em Salas Elétricas',
     subtitle: 'Vencedor do Hackatom ABB 2025',
     description:
-      'Solução com YOLO para detecção de EPIs em ambientes industriais, construída como prova de conceito para segurança, monitoramento e tomada de decisão visual em fábrica.',
+      'Solução com YOLO para detecção de EPIs em ambientes industriais, voltada a segurança e monitoramento visual em fábrica.',
   },
   {
     title: 'Monitoramento da Cinética de Crescimento da Soja',
     subtitle: 'Apresentado na CBSoja 2025',
     description:
-      'Pipeline em Python com ResNet18 e ResNet50, imagens de horta e análise visual aplicada ao acompanhamento do crescimento da soja em pesquisa agrícola.',
+      'Pipeline em Python com ResNet18/50 e imagens de horta para acompanhamento visual do crescimento da soja.',
   },
   {
     title: 'Portfólio Pessoal Imersivo',
     subtitle: 'Este site',
     description:
-      'Portfólio com experiência visual imersiva, integração de IA e estrutura full stack para apresentar trajetória, competências e projetos de forma interativa.',
+      'Portfólio com experiência 3D, integração de IA e estrutura full stack para apresentar trajetória e projetos de forma interativa.',
+  },
+];
+
+const githubProjects = [
+  {
+    title: 'WAR Brasil',
+    subtitle: 'Multiplayer · Next.js · PostgreSQL',
+    description: 'Jogo de estratégia multiplayer por turnos em um mapa interativo do Brasil, com salas sincronizadas e estado persistido.',
+    links: [{ label: 'GitHub', href: 'https://github.com/luigicollesi/war-brasil' }],
+  },
+  {
+    title: 'Contrapista',
+    subtitle: 'Multiplayer · IA · Full Stack',
+    description: 'Jogo de investigação e dedução com matchmaking, autenticação e casos gerados e avaliados por IA.',
+    links: [{ label: 'GitHub', href: 'https://github.com/luigicollesi/Contrapista' }],
+  },
+  {
+    title: 'Audiolivros',
+    subtitle: 'React Native · Expo · NestJS',
+    description: 'Aplicativo mobile de audiolivros com backend separado para autenticação, catálogo, áudio e recursos de usuário.',
+    links: [
+      { label: 'App', href: 'https://github.com/luigicollesi/audiolivros' },
+      { label: 'Backend', href: 'https://github.com/luigicollesi/audiolivros-server' },
+    ],
+  },
+  {
+    title: 'My Site',
+    subtitle: 'Next.js · Three.js · OpenRouter',
+    description: 'Código deste portfólio interativo, incluindo experiência 3D e a camada de IA integrada ao site.',
+    links: [{ label: 'GitHub', href: 'https://github.com/luigicollesi/my-site' }],
   },
 ];
 
@@ -171,6 +201,15 @@ export default function InfoPage() {
                 <FaLinkedin size={25} />
               </a>
               <a
+                href="https://github.com/luigicollesi"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="hover:text-cyan-300 transition"
+              >
+                <FaGithub size={25} />
+              </a>
+              <a
                 href="mailto:luigicollesi@gmail.com"
                 aria-label="Email"
                 className="hover:text-cyan-300 transition"
@@ -192,6 +231,17 @@ export default function InfoPage() {
             <Section title="Projetos técnicos">
               <div className="grid gap-5 md:grid-cols-2">
                 {projects.map((project) => (
+                  <ProjectCard key={project.title} {...project} />
+                ))}
+              </div>
+            </Section>
+
+            <Section title="Projetos no GitHub">
+              <p className="text-sm leading-6 text-gray-500 mb-6">
+                Resumos curtos dos projetos públicos. O código, documentação e detalhes técnicos estão nos repositórios.
+              </p>
+              <div className="grid gap-5 md:grid-cols-2">
+                {githubProjects.map((project) => (
                   <ProjectCard key={project.title} {...project} />
                 ))}
               </div>
@@ -322,16 +372,34 @@ function ProjectCard({
   title,
   subtitle,
   description,
+  links,
 }: {
   title: string;
   subtitle: string;
   description: string;
+  links?: { label: string; href: string }[];
 }) {
   return (
     <article className="border border-cyan-400/25 bg-black/55 rounded-xl p-5 shadow-[0_0_20px_rgba(0,255,255,0.05)]">
       <h3 className="text-lg font-semibold text-cyan-300">{title}</h3>
       <p className="text-xs uppercase tracking-wider text-cyan-600 mt-1">{subtitle}</p>
       <p className="text-sm leading-6 text-gray-400 mt-4">{description}</p>
+      {links?.length ? (
+        <div className="mt-4 flex flex-wrap gap-4">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-200 transition"
+            >
+              <FaGithub size={15} />
+              {link.label}
+            </a>
+          ))}
+        </div>
+      ) : null}
     </article>
   );
 }
