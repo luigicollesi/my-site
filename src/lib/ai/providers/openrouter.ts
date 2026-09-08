@@ -56,18 +56,31 @@ export function createOpenRouterClient(): AiProviderClient {
         requestBody.models = params.fallbackModels;
       }
 
+      if (params.reasoning) {
+        requestBody.reasoning = params.reasoning;
+      }
+
       if (provider) {
         // OpenRouter accepts `provider`, but `openai` SDK types don't declare it.
         requestBody.provider = provider;
       }
 
       const response = await client.chat.completions.create(requestBody as never);
-
-      const text = response.choices?.[0]?.message?.content?.trim() || '';
+      const choice = response.choices?.[0];
+      const text = choice?.message?.content?.trim() || '';
 
       return {
         text,
         raw: response,
+        model: response.model,
+        finishReason: choice?.finish_reason ?? null,
+        usage: response.usage
+          ? {
+              promptTokens: response.usage.prompt_tokens,
+              completionTokens: response.usage.completion_tokens,
+              totalTokens: response.usage.total_tokens,
+            }
+          : undefined,
       };
     },
   };
