@@ -13,14 +13,28 @@ export type AiChatCompletionParams = {
   maxTokens?: number;
 };
 
+export type AiReasoningConfig = {
+  effort?: 'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
+  exclude?: boolean;
+  enabled?: boolean;
+};
+
 export type AiProviderChatCompletionParams = AiChatCompletionParams & {
   model: string;
   fallbackModels?: string[];
+  reasoning?: AiReasoningConfig;
 };
 
 export type AiChatCompletionResult = {
   text: string;
   raw: unknown;
+  model?: string;
+  finishReason?: string | null;
+  usage?: {
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
+  };
 };
 
 export type AiProviderClient = {
