@@ -6,8 +6,26 @@ const MODEL_CATALOG_TIMEOUT_MS = 5000;
 const FREE_ROUTER_MODEL = 'openrouter/free';
 const REQUIRED_PARAMETERS = ['temperature', 'max_tokens'];
 
-type OpenRouterModel = {
-  id?: string;
+export type OpenRouterReasoningMetadata = {
+  supported_efforts?: string[] | null;
+  default_effort?: string | null;
+  default_enabled?: boolean;
+  mandatory?: boolean;
+};
+
+type OpenRouterPricingOverride = {
+  prompt?: string;
+  completion?: string;
+  request?: string;
+  internal_reasoning?: string;
+};
+
+export type OpenRouterModelDescriptor = {
+  id: string;
+  canonical_slug?: string;
+  name?: string;
+  description?: string;
+  context_length?: number;
   architecture?: {
     input_modalities?: string[];
     output_modalities?: string[];
@@ -16,9 +34,16 @@ type OpenRouterModel = {
     prompt?: string;
     completion?: string;
     request?: string;
+    internal_reasoning?: string;
+    overrides?: OpenRouterPricingOverride[];
   };
   supported_parameters?: string[];
+  reasoning?: OpenRouterReasoningMetadata;
   expiration_date?: string | null;
+};
+
+type OpenRouterModel = Omit<OpenRouterModelDescriptor, 'id'> & {
+  id?: string;
 };
 
 type OpenRouterModelsResponse = {
@@ -27,7 +52,7 @@ type OpenRouterModelsResponse = {
 
 type CachedCatalog = {
   expiresAt: number;
-  models: string[];
+  models: OpenRouterModelDescriptor[];
 };
 
 let cachedCatalog: CachedCatalog | null = null;
@@ -41,6 +66,16 @@ function isZeroPrice(value: string | undefined, required = false): boolean {
   return Number.isFinite(price) && price === 0;
 }
 
+function hasOnlyZeroPriceOverrides(overrides: OpenRouterPricingOverride[] | undefined): boolean {
+  return (overrides ?? []).every(
+    (override) =>
+      isZeroPrice(override.prompt) &&
+      isZeroPrice(override.completion) &&
+      isZeroPrice(override.request) &&
+      isZeroPrice(override.internal_reasoning),
+  );
+}
+
 function isExpired(expirationDate?: string | null): boolean {
   if (!expirationDate) return false;
   const expiresAt = Date.parse(expirationDate);
@@ -52,7 +87,7 @@ function supportsRequiredParameters(model: OpenRouterModel): boolean {
   return REQUIRED_PARAMETERS.every((parameter) => supported.includes(parameter));
 }
 
-function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModel & { id: string } {
+function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModelDescriptor {
   const inputModalities = model.architecture?.input_modalities ?? [];
   const outputModalities = model.architecture?.output_modalities ?? [];
 
@@ -65,11 +100,13 @@ function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModel & { i
       isZeroPrice(model.pricing?.prompt, true) &&
       isZeroPrice(model.pricing?.completion, true) &&
       isZeroPrice(model.pricing?.request) &&
+      isZeroPrice(model.pricing?.internal_reasoning) &&
+      hasOnlyZeroPriceOverrides(model.pricing?.overrides) &&
       !isExpired(model.expiration_date),
   );
 }
 
-async function fetchFreeTextModels(): Promise<string[]> {
+async function fetchFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
   const config = getAiConfig();
   const baseUrl = config.openRouter.baseUrl.replace(/\/$/, '');
   const url = new URL(`${baseUrl}/models`);
@@ -105,14 +142,10 @@ async function fetchFreeTextModels(): Promise<string[]> {
   }
 
   const body = (await response.json()) as OpenRouterModelsResponse;
-  const models = (body.data ?? [])
-    .filter(isFreeTextModel)
-    .map((model) => model.id);
-
-  return [...new Set(models)];
+  return (body.data ?? []).filter(isFreeTextModel);
 }
 
-export async function getFreeTextModels(): Promise<string[]> {
+export async function getFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
   const now = Date.now();
 
   if (cachedCatalog && cachedCatalog.expiresAt > now) {
@@ -135,16 +168,15 @@ export async function getFreeTextModels(): Promise<string[]> {
     }
   }
 
+  // Reuse a previously validated catalog when discovery is temporarily unavailable.
   if (cachedCatalog?.models.length) {
     return cachedCatalog.models;
   }
 
-  // Fallback oficial do OpenRouter: continua gratuito e escolhe um modelo
-  // compatível com as características da requisição quando o catálogo não
-  // puder ser consultado temporariamente.
+  // Fail closed instead of delegating to openrouter/free, which chooses a random free model.
   cachedCatalog = {
     expiresAt: now + MODEL_CATALOG_FAILURE_CACHE_MS,
-    models: [FREE_ROUTER_MODEL],
+    models: [],
   };
 
   return cachedCatalog.models;
