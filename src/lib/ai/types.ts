@@ -42,7 +42,7 @@ export type AiProviderClient = {
 };
 
 export type OpenRouterConfig = {
-  apiKey: string;
+  apiKeys: string[];
   baseUrl: string;
   appName?: string;
   appUrl?: string;
