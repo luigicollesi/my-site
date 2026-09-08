@@ -24,28 +24,29 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 This project uses a centralized AI backend layer with OpenRouter in `src/lib/ai/*`.
 
-The application no longer depends on a model selected through environment variables. Before generating a response, the server queries the OpenRouter model catalog and keeps only models that:
+The application does not depend on a model selected through environment variables. Before generating a response, the server queries the OpenRouter model catalog, keeps only compatible zero-cost text models, applies the portfolio model policy and sends up to three candidates in a single OpenRouter completion request using native model/provider fallbacks.
 
-- accept `text` input;
-- return `text` output;
-- have zero prompt, completion and request cost;
-- support the parameters currently used by the chat flow.
+The catalog is cached for 15 minutes. If discovery is temporarily unavailable, only a previously validated catalog is reused; the application fails closed when no validated catalog exists.
 
-The catalog is cached for 15 minutes. Models that fail during completion are temporarily skipped for 24 hours in the current server process and the next free compatible model is tried. Each request attempts at most five models to avoid consuming the free request quota during broader OpenRouter/provider outages.
-
-If the model catalog cannot be reached and there is no cached catalog, the application falls back to the official `openrouter/free` router until discovery is available again.
-
-Create a `.env.local` file and configure at least:
+Create a `.env.local` file and configure at least one OpenRouter API key:
 
 ```env
 LLM_OPENROUTER_API_KEY=<your-openrouter-api-key>
 ```
 
+Multiple credentials can be configured as a comma-separated list:
+
+```env
+LLM_OPENROUTER_API_KEY=key1,key2,key3
+```
+
+The first key is used normally. Additional keys are credential fallbacks only when the preceding credential is rejected as invalid/revoked (`401`). They are not rotated on `429`, quota or provider rate-limit responses.
+
 `LLM_PROVIDER=openrouter` can still be set explicitly, but OpenRouter is already the default and only supported provider.
 
 Optional settings:
 
-- `LLM_DEBUG=true` for request/response and model-discovery logs (server-side only)
+- `LLM_DEBUG=true` for model/routing diagnostics (server-side only)
 - `LLM_OPENROUTER_APP_NAME` and `LLM_OPENROUTER_APP_URL` for OpenRouter attribution headers
 - Privacy/routing controls:
   - `LLM_OPENROUTER_DATA_COLLECTION=allow|deny`
@@ -67,13 +68,13 @@ npm uninstall together-ai
 
 To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
