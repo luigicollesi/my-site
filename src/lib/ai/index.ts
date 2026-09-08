@@ -1,7 +1,9 @@
 import { getAiClient } from '@/lib/ai/client';
 import { getAiConfig } from '@/lib/ai/config';
 import { AiModelsUnavailableError, getErrorMessage, getErrorStatus, type AiModelFailure } from '@/lib/ai/errors';
+import { selectPortfolioModels } from '@/lib/ai/model-policy';
 import { getFreeTextModels } from '@/lib/ai/providers/openrouter-models';
+import { validateAiResponse } from '@/lib/ai/response-guard';
 import type { AiChatCompletionParams, AiChatCompletionResult } from '@/lib/ai/types';
 
 const MAX_MODELS_PER_REQUEST = 3;
@@ -9,51 +11,83 @@ const MAX_MODELS_PER_REQUEST = 3;
 export async function chatCompletion(params: AiChatCompletionParams): Promise<AiChatCompletionResult> {
   const config = getAiConfig();
   const client = getAiClient();
-  const models = (await getFreeTextModels()).slice(0, MAX_MODELS_PER_REQUEST);
+  const discoveredModels = await getFreeTextModels();
+  const selectedModels = selectPortfolioModels(discoveredModels, MAX_MODELS_PER_REQUEST);
+  const modelIds = selectedModels.map(({ id }) => id);
 
-  if (!models.length) {
-    throw new AiModelsUnavailableError('Nenhum modelo gratuito text-to-text está disponível no momento.');
+  if (!modelIds.length) {
+    throw new AiModelsUnavailableError(
+      'Nenhum modelo gratuito adequado ao assistente de portfólio está disponível no momento.',
+    );
   }
 
-  const [model, ...fallbackModels] = models;
+  const [model, ...fallbackModels] = modelIds;
 
   if (config.debug) {
     console.debug(
-      `[AI][request] provider=${config.provider} model=${model} fallbacks=${fallbackModels.length}`,
-      fallbackModels,
+      `[AI][request] provider=${config.provider} discovered=${discoveredModels.length} selected=${modelIds.join(' -> ')}`,
     );
-    console.debug('[AI][prompt]', params.messages);
   }
 
+  let response: AiChatCompletionResult;
+
   try {
-    const response = await client.chatCompletion({
+    response = await client.chatCompletion({
       ...params,
       model,
       fallbackModels,
+      reasoning: {
+        effort: 'none',
+        exclude: true,
+      },
     });
-
-    if (config.debug) {
-      console.debug('[AI][raw-response]', response.raw);
-    }
-
-    return response;
   } catch (error) {
     const failure: AiModelFailure = {
-      model: models.join(' -> '),
+      model: modelIds.join(' -> '),
       status: getErrorStatus(error),
       message: getErrorMessage(error),
     };
 
     if (config.debug) {
-      console.error(`[AI][error] models=${models.join(' -> ')}`, error);
+      console.error(`[AI][error] models=${modelIds.join(' -> ')}`, error);
     }
 
     const status = failure.status === 429 ? 429 : 502;
 
     throw new AiModelsUnavailableError(
-      `A requisição aos modelos gratuitos falhou: ${models.join(', ')}`,
+      `A requisição aos modelos gratuitos falhou: ${modelIds.join(', ')}`,
       [failure],
       status,
     );
   }
+
+  const validation = validateAiResponse(response.text);
+
+  if (!validation.valid) {
+    if (config.debug) {
+      console.error(
+        `[AI][guard] rejected=true reason=${validation.reason} resolvedModel=${response.model ?? 'unknown'}`,
+      );
+    }
+
+    throw new AiModelsUnavailableError(
+      'A resposta do modelo foi rejeitada por não atender às regras do assistente.',
+      [
+        {
+          model: response.model ?? modelIds.join(' -> '),
+          message: `Resposta rejeitada pelo guard: ${validation.reason}`,
+        },
+      ],
+      502,
+    );
+  }
+
+  if (config.debug) {
+    console.debug(
+      `[AI][response] resolvedModel=${response.model ?? 'unknown'} finishReason=${response.finishReason ?? 'unknown'} ` +
+        `promptTokens=${response.usage?.promptTokens ?? 'unknown'} completionTokens=${response.usage?.completionTokens ?? 'unknown'}`,
+    );
+  }
+
+  return response;
 }
