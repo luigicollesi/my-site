@@ -21,6 +21,16 @@ function parseCsv(value?: string): string[] | undefined {
   return items.length ? items : undefined;
 }
 
+function requireCsvEnv(name: string): string[] {
+  const items = parseCsv(process.env[name]);
+
+  if (!items?.length) {
+    throw new Error(`A variável de ambiente ${name} não está definida.`);
+  }
+
+  return [...new Set(items)];
+}
+
 function parseDataCollection(value?: string): 'allow' | 'deny' | undefined {
   if (!value) return undefined;
   const normalized = value.trim().toLowerCase();
@@ -28,16 +38,6 @@ function parseDataCollection(value?: string): 'allow' | 'deny' | undefined {
     return normalized;
   }
   throw new Error('LLM_OPENROUTER_DATA_COLLECTION deve ser "allow" ou "deny".');
-}
-
-function requireEnv(name: string): string {
-  const value = process.env[name]?.trim();
-
-  if (!value) {
-    throw new Error(`A variável de ambiente ${name} não está definida.`);
-  }
-
-  return value;
 }
 
 function parseProvider(rawProvider?: string): LlmProvider {
@@ -63,7 +63,7 @@ export function getAiConfig(): AiConfig {
     provider,
     debug: isTruthy(process.env.LLM_DEBUG),
     openRouter: {
-      apiKey: requireEnv('LLM_OPENROUTER_API_KEY'),
+      apiKeys: requireCsvEnv('LLM_OPENROUTER_API_KEY'),
       baseUrl: process.env.LLM_OPENROUTER_BASE_URL?.trim() || OPENROUTER_BASE_URL,
       appName: process.env.LLM_OPENROUTER_APP_NAME?.trim() || undefined,
       appUrl: process.env.LLM_OPENROUTER_APP_URL?.trim() || undefined,
