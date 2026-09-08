@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 
 import { getAiConfig } from '@/lib/ai/config';
+import { getErrorStatus } from '@/lib/ai/errors';
 import type { AiChatCompletionResult, AiProviderChatCompletionParams, AiProviderClient } from '@/lib/ai/types';
 
 const OPENROUTER_REQUEST_TIMEOUT_MS = 20_000;
@@ -18,13 +19,16 @@ export function createOpenRouterClient(): AiProviderClient {
     defaultHeaders['X-Title'] = config.openRouter.appName;
   }
 
-  const client = new OpenAI({
-    apiKey: config.openRouter.apiKey,
-    baseURL: config.openRouter.baseUrl,
-    defaultHeaders,
-    maxRetries: 0,
-    timeout: OPENROUTER_REQUEST_TIMEOUT_MS,
-  });
+  const clients = config.openRouter.apiKeys.map(
+    (apiKey) =>
+      new OpenAI({
+        apiKey,
+        baseURL: config.openRouter.baseUrl,
+        defaultHeaders,
+        maxRetries: 0,
+        timeout: OPENROUTER_REQUEST_TIMEOUT_MS,
+      }),
+  );
 
   return {
     async chatCompletion(params: AiProviderChatCompletionParams): Promise<AiChatCompletionResult> {
@@ -65,23 +69,45 @@ export function createOpenRouterClient(): AiProviderClient {
         requestBody.provider = provider;
       }
 
-      const response = await client.chat.completions.create(requestBody as never);
-      const choice = response.choices?.[0];
-      const text = choice?.message?.content?.trim() || '';
+      for (let keyIndex = 0; keyIndex < clients.length; keyIndex += 1) {
+        const client = clients[keyIndex];
 
-      return {
-        text,
-        raw: response,
-        model: response.model,
-        finishReason: choice?.finish_reason ?? null,
-        usage: response.usage
-          ? {
-              promptTokens: response.usage.prompt_tokens,
-              completionTokens: response.usage.completion_tokens,
-              totalTokens: response.usage.total_tokens,
+        try {
+          const response = await client.chat.completions.create(requestBody as never);
+          const choice = response.choices?.[0];
+          const text = choice?.message?.content?.trim() || '';
+
+          return {
+            text,
+            raw: response,
+            model: response.model,
+            finishReason: choice?.finish_reason ?? null,
+            usage: response.usage
+              ? {
+                  promptTokens: response.usage.prompt_tokens,
+                  completionTokens: response.usage.completion_tokens,
+                  totalTokens: response.usage.total_tokens,
+                }
+              : undefined,
+          };
+        } catch (error) {
+          const status = getErrorStatus(error);
+          const hasNextCredential = keyIndex < clients.length - 1;
+
+          // Credential failover is only for an invalid/revoked key. Do not rotate
+          // on 429 or quota/provider limits.
+          if (status === 401 && hasNextCredential) {
+            if (config.debug) {
+              console.warn(`[AI][auth] OpenRouter keyIndex=${keyIndex} rejected with 401; trying next credential.`);
             }
-          : undefined,
-      };
+            continue;
+          }
+
+          throw error;
+        }
+      }
+
+      throw new Error('Nenhuma credencial válida do OpenRouter está disponível.');
     },
   };
 }
