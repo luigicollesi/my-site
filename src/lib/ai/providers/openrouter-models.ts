@@ -106,19 +106,10 @@ function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModelDescri
   );
 }
 
-async function fetchFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
+function buildCatalogHeaders(apiKey: string): Record<string, string> {
   const config = getAiConfig();
-  const baseUrl = config.openRouter.baseUrl.replace(/\/$/, '');
-  const url = new URL(`${baseUrl}/models`);
-
-  url.searchParams.set('input_modalities', 'text');
-  url.searchParams.set('output_modalities', 'text');
-  url.searchParams.set('supported_parameters', REQUIRED_PARAMETERS.join(','));
-  url.searchParams.set('max_price', '0');
-  url.searchParams.set('sort', 'most-popular');
-
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${config.openRouter.apiKey}`,
+    Authorization: `Bearer ${apiKey}`,
     Accept: 'application/json',
   };
 
@@ -130,19 +121,49 @@ async function fetchFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
     headers['X-Title'] = config.openRouter.appName;
   }
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers,
-    cache: 'no-store',
-    signal: AbortSignal.timeout(MODEL_CATALOG_TIMEOUT_MS),
-  });
+  return headers;
+}
 
-  if (!response.ok) {
-    throw new Error(`Falha ao consultar modelos gratuitos do OpenRouter (${response.status}).`);
+async function fetchFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
+  const config = getAiConfig();
+  const baseUrl = config.openRouter.baseUrl.replace(/\/$/, '');
+  const url = new URL(`${baseUrl}/models`);
+
+  url.searchParams.set('input_modalities', 'text');
+  url.searchParams.set('output_modalities', 'text');
+  url.searchParams.set('supported_parameters', REQUIRED_PARAMETERS.join(','));
+  url.searchParams.set('max_price', '0');
+  url.searchParams.set('sort', 'most-popular');
+
+  for (let keyIndex = 0; keyIndex < config.openRouter.apiKeys.length; keyIndex += 1) {
+    const apiKey = config.openRouter.apiKeys[keyIndex];
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: buildCatalogHeaders(apiKey),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(MODEL_CATALOG_TIMEOUT_MS),
+    });
+
+    const hasNextCredential = keyIndex < config.openRouter.apiKeys.length - 1;
+
+    // Only invalid/revoked credentials trigger credential fallback. Rate limits
+    // and quota responses are surfaced without trying another key.
+    if (response.status === 401 && hasNextCredential) {
+      if (config.debug) {
+        console.warn(`[AI][models][auth] OpenRouter keyIndex=${keyIndex} rejected with 401; trying next credential.`);
+      }
+      continue;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Falha ao consultar modelos gratuitos do OpenRouter (${response.status}).`);
+    }
+
+    const body = (await response.json()) as OpenRouterModelsResponse;
+    return (body.data ?? []).filter(isFreeTextModel);
   }
 
-  const body = (await response.json()) as OpenRouterModelsResponse;
-  return (body.data ?? []).filter(isFreeTextModel);
+  throw new Error('Nenhuma credencial válida do OpenRouter está disponível para consultar o catálogo.');
 }
 
 export async function getFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
