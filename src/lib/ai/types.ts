@@ -15,6 +15,7 @@ export type AiChatCompletionParams = {
 
 export type AiProviderChatCompletionParams = AiChatCompletionParams & {
   model: string;
+  fallbackModels?: string[];
 };
 
 export type AiChatCompletionResult = {
