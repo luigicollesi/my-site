@@ -3,6 +3,8 @@ import OpenAI from 'openai';
 import { getAiConfig } from '@/lib/ai/config';
 import type { AiChatCompletionResult, AiProviderChatCompletionParams, AiProviderClient } from '@/lib/ai/types';
 
+const OPENROUTER_REQUEST_TIMEOUT_MS = 20_000;
+
 export function createOpenRouterClient(): AiProviderClient {
   const config = getAiConfig();
 
@@ -20,6 +22,8 @@ export function createOpenRouterClient(): AiProviderClient {
     apiKey: config.openRouter.apiKey,
     baseURL: config.openRouter.baseUrl,
     defaultHeaders,
+    maxRetries: 0,
+    timeout: OPENROUTER_REQUEST_TIMEOUT_MS,
   });
 
   return {
@@ -47,6 +51,10 @@ export function createOpenRouterClient(): AiProviderClient {
         temperature: params.temperature,
         max_tokens: params.maxTokens,
       };
+
+      if (params.fallbackModels?.length) {
+        requestBody.models = params.fallbackModels;
+      }
 
       if (provider) {
         // OpenRouter accepts `provider`, but `openai` SDK types don't declare it.
