@@ -7,6 +7,14 @@ const PREFERRED_MODEL_IDS = [
   'upstage/solar-pro-3:free',
 ];
 
+const EMERGENCY_MODEL_IDS = [
+  ...PREFERRED_MODEL_IDS,
+  'google/gemma-4-31b-it:free',
+  'google/gemma-4-26b-a4b-it:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'dots-studio/dots3-note-preview:free',
+];
+
 const BLOCKED_MODEL_ID_PATTERNS = [
   // Thinking Machines' free Inkling endpoints are restricted to agentic harnesses,
   // so they are not valid candidates for the portfolio chat endpoint.
@@ -89,4 +97,8 @@ export function selectPortfolioModels(
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .slice(0, limit)
     .map(({ model }) => model);
+}
+
+export function getEmergencyPortfolioModelIds(limit = 8): string[] {
+  return [...new Set(EMERGENCY_MODEL_IDS)].slice(0, limit);
 }
