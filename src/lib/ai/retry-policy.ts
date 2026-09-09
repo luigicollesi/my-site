@@ -29,8 +29,8 @@ function classifyForbidden(message: string): AiRetryAction {
     return 'STOP';
   }
 
-  // A generic 403 can be model/provider scoped. Prefer trying another already
-  // validated model rather than aborting the whole sweep prematurely.
+  // A generic 403 can still be specific to one model/provider. Prefer trying
+  // another already validated model rather than aborting the whole sweep.
   return 'NEXT_MODEL';
 }
 
@@ -48,8 +48,8 @@ export function shouldBackoffBeforeNextModel(status?: number): boolean {
 export function shouldTryNextCredentialAfterSweep(failures: AiModelFailure[]): boolean {
   if (!failures.length) return false;
 
-  // Do not rotate credentials after a quota/rate-limit response. A different key
-  // must not be used as a mechanism to bypass provider limits.
+  // A 429/402 reflects provider/account limiting, so do not use another key as
+  // a mechanism to evade the same limit after the model sweep is exhausted.
   if (failures.some((failure) => failure.status === 429 || failure.status === 402)) {
     return false;
   }
