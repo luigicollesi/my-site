@@ -7,6 +7,20 @@ const PREFERRED_MODEL_IDS = [
   'upstage/solar-pro-3:free',
 ];
 
+const EMERGENCY_MODEL_IDS = [
+  ...PREFERRED_MODEL_IDS,
+  'google/gemma-4-31b-it:free',
+  'google/gemma-4-26b-a4b-it:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'dots-studio/dots3-note-preview:free',
+];
+
+const BLOCKED_MODEL_ID_PATTERNS = [
+  // Thinking Machines' free Inkling endpoints are restricted to agentic harnesses,
+  // so they are not valid candidates for the portfolio chat endpoint.
+  /^thinkingmachines\/inkling(?:-small)?:free$/i,
+];
+
 const STRONGLY_SPECIALIZED_PATTERNS = [
   /rerank/i,
   /embedding/i,
@@ -17,6 +31,8 @@ const STRONGLY_SPECIALIZED_PATTERNS = [
   /medical[-_ ]?focused/i,
   /speech[-_ ]?to[-_ ]?text/i,
   /text[-_ ]?to[-_ ]?speech/i,
+  /agentic harness/i,
+  /coding agent/i,
 ];
 
 function reasoningCanBeDisabled(model: OpenRouterModelDescriptor): boolean {
@@ -37,6 +53,10 @@ function reasoningCanBeDisabled(model: OpenRouterModelDescriptor): boolean {
   return reasoning.default_enabled !== true;
 }
 
+function isBlockedModelId(model: OpenRouterModelDescriptor): boolean {
+  return BLOCKED_MODEL_ID_PATTERNS.some((pattern) => pattern.test(model.id));
+}
+
 function isStronglySpecialized(model: OpenRouterModelDescriptor): boolean {
   const searchable = `${model.id} ${model.name ?? ''} ${model.description ?? ''}`;
   return STRONGLY_SPECIALIZED_PATTERNS.some((pattern) => pattern.test(searchable));
@@ -44,6 +64,7 @@ function isStronglySpecialized(model: OpenRouterModelDescriptor): boolean {
 
 export function isPortfolioModelEligible(model: OpenRouterModelDescriptor): boolean {
   if (!model.id.endsWith(':free')) return false;
+  if (isBlockedModelId(model)) return false;
   if ((model.context_length ?? 0) < 16_384) return false;
   if (!reasoningCanBeDisabled(model)) return false;
   if (isStronglySpecialized(model)) return false;
@@ -76,4 +97,8 @@ export function selectPortfolioModels(
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .slice(0, limit)
     .map(({ model }) => model);
+}
+
+export function getEmergencyPortfolioModelIds(limit = 8): string[] {
+  return [...new Set(EMERGENCY_MODEL_IDS)].slice(0, limit);
 }

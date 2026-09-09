@@ -23,6 +23,7 @@ export type AiProviderChatCompletionParams = AiChatCompletionParams & {
   model: string;
   fallbackModels?: string[];
   reasoning?: AiReasoningConfig;
+  credentialIndex?: number;
 };
 
 export type AiChatCompletionResult = {
@@ -38,6 +39,7 @@ export type AiChatCompletionResult = {
 };
 
 export type AiProviderClient = {
+  credentialCount: number;
   chatCompletion(params: AiProviderChatCompletionParams): Promise<AiChatCompletionResult>;
 };
 

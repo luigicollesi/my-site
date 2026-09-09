@@ -24,7 +24,9 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 This project uses a centralized AI backend layer with OpenRouter in `src/lib/ai/*`.
 
-The application does not depend on a model selected through environment variables. Before generating a response, the server queries the OpenRouter model catalog, keeps only compatible zero-cost text models, applies the portfolio model policy and sends up to three candidates in a single OpenRouter completion request using native model/provider fallbacks.
+The application does not depend on a model selected through environment variables. Before generating a response, the server queries the OpenRouter model catalog, keeps only compatible zero-cost text models, applies the portfolio model policy and ranks a bounded pool of candidates.
+
+The runtime then attempts the ranked models explicitly under a global request deadline. Provider-level failover remains enabled inside OpenRouter, while model-level recovery is controlled by the local attempt orchestrator so empty responses, transient provider failures and responses rejected by the safety guard can move to another model predictably.
 
 The catalog is cached for 15 minutes. If discovery is temporarily unavailable, only a previously validated catalog is reused; the application fails closed when no validated catalog exists.
 
@@ -40,7 +42,7 @@ Multiple credentials can be configured as a comma-separated list:
 LLM_OPENROUTER_API_KEY=key1,key2,key3
 ```
 
-The first key is used normally. Additional keys are credential fallbacks only when the preceding credential is rejected as invalid/revoked (`401`). They are not rotated on `429`, quota or provider rate-limit responses.
+The first key is used normally. Additional credentials provide failover for invalid/revoked credentials and supported non-quota failure paths. They are not rotated to bypass `429` quota or provider rate limits.
 
 `LLM_PROVIDER=openrouter` can still be set explicitly, but OpenRouter is already the default and only supported provider.
 

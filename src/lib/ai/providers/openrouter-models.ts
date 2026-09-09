@@ -1,7 +1,6 @@
 import { getAiConfig } from '@/lib/ai/config';
 
 const MODEL_CATALOG_CACHE_MS = 15 * 60 * 1000;
-const MODEL_CATALOG_FAILURE_CACHE_MS = 60 * 1000;
 const MODEL_CATALOG_TIMEOUT_MS = 5000;
 const FREE_ROUTER_MODEL = 'openrouter/free';
 const REQUIRED_PARAMETERS = ['temperature', 'max_tokens'];
@@ -94,6 +93,7 @@ function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModelDescri
   return Boolean(
     model.id &&
       model.id !== FREE_ROUTER_MODEL &&
+      model.id.endsWith(':free') &&
       inputModalities.includes('text') &&
       outputModalities.includes('text') &&
       supportsRequiredParameters(model) &&
@@ -106,10 +106,9 @@ function isFreeTextModel(model: OpenRouterModel): model is OpenRouterModelDescri
   );
 }
 
-function buildCatalogHeaders(apiKey: string): Record<string, string> {
+function buildCatalogHeaders(): Record<string, string> {
   const config = getAiConfig();
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${apiKey}`,
     Accept: 'application/json',
   };
 
@@ -129,41 +128,32 @@ async function fetchFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
   const baseUrl = config.openRouter.baseUrl.replace(/\/$/, '');
   const url = new URL(`${baseUrl}/models`);
 
-  url.searchParams.set('input_modalities', 'text');
+  // Keep the server-side query deliberately broad and stable. Eligibility for
+  // text input, required parameters and zero pricing is enforced locally below,
+  // so catalog discovery does not depend on provider/quota-specific filters.
   url.searchParams.set('output_modalities', 'text');
-  url.searchParams.set('supported_parameters', REQUIRED_PARAMETERS.join(','));
-  url.searchParams.set('max_price', '0');
   url.searchParams.set('sort', 'most-popular');
 
-  for (let keyIndex = 0; keyIndex < config.openRouter.apiKeys.length; keyIndex += 1) {
-    const apiKey = config.openRouter.apiKeys[keyIndex];
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: buildCatalogHeaders(apiKey),
-      cache: 'no-store',
-      signal: AbortSignal.timeout(MODEL_CATALOG_TIMEOUT_MS),
-    });
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: buildCatalogHeaders(),
+    cache: 'no-store',
+    signal: AbortSignal.timeout(MODEL_CATALOG_TIMEOUT_MS),
+  });
 
-    const hasNextCredential = keyIndex < config.openRouter.apiKeys.length - 1;
-
-    // Only invalid/revoked credentials trigger credential fallback. Rate limits
-    // and quota responses are surfaced without trying another key.
-    if (response.status === 401 && hasNextCredential) {
-      if (config.debug) {
-        console.warn(`[AI][models][auth] OpenRouter keyIndex=${keyIndex} rejected with 401; trying next credential.`);
-      }
-      continue;
-    }
-
-    if (!response.ok) {
-      throw new Error(`Falha ao consultar modelos gratuitos do OpenRouter (${response.status}).`);
-    }
-
-    const body = (await response.json()) as OpenRouterModelsResponse;
-    return (body.data ?? []).filter(isFreeTextModel);
+  if (!response.ok) {
+    throw new Error(`Falha ao consultar catálogo público do OpenRouter (${response.status}).`);
   }
 
-  throw new Error('Nenhuma credencial válida do OpenRouter está disponível para consultar o catálogo.');
+  const body = (await response.json()) as OpenRouterModelsResponse;
+  const rawModels = body.data ?? [];
+  const models = rawModels.filter(isFreeTextModel);
+
+  if (config.debug) {
+    console.debug(`[AI][models] publicCatalog=${rawModels.length} freeTextEligible=${models.length}`);
+  }
+
+  return models;
 }
 
 export async function getFreeTextModels(): Promise<OpenRouterModelDescriptor[]> {
@@ -183,22 +173,23 @@ export async function getFreeTextModels(): Promise<OpenRouterModelDescriptor[]> 
       };
       return models;
     }
+
+    if (getAiConfig().debug) {
+      console.warn('[AI][models] catálogo público não produziu modelos gratuitos elegíveis.');
+    }
   } catch (error) {
     if (getAiConfig().debug) {
-      console.error('[AI][models] falha ao atualizar catálogo gratuito', error);
+      console.error('[AI][models] falha ao atualizar catálogo público gratuito', error);
     }
   }
 
-  // Reuse a previously validated catalog when discovery is temporarily unavailable.
+  // A stale catalog that was previously validated is safer than turning a
+  // transient discovery failure into an immediate outage.
   if (cachedCatalog?.models.length) {
     return cachedCatalog.models;
   }
 
-  // Fail closed instead of delegating to openrouter/free, which chooses a random free model.
-  cachedCatalog = {
-    expiresAt: now + MODEL_CATALOG_FAILURE_CACHE_MS,
-    models: [],
-  };
-
-  return cachedCatalog.models;
+  // Do not cache an empty result: serverless instances must be able to recover
+  // immediately on the next request when the public catalog becomes available.
+  return [];
 }

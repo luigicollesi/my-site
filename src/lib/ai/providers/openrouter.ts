@@ -1,10 +1,9 @@
 import OpenAI from 'openai';
 
 import { getAiConfig } from '@/lib/ai/config';
-import { getErrorStatus } from '@/lib/ai/errors';
 import type { AiChatCompletionResult, AiProviderChatCompletionParams, AiProviderClient } from '@/lib/ai/types';
 
-const OPENROUTER_REQUEST_TIMEOUT_MS = 20_000;
+const OPENROUTER_REQUEST_TIMEOUT_MS = 7_000;
 
 export function createOpenRouterClient(): AiProviderClient {
   const config = getAiConfig();
@@ -31,6 +30,8 @@ export function createOpenRouterClient(): AiProviderClient {
   );
 
   return {
+    credentialCount: clients.length,
+
     async chatCompletion(params: AiProviderChatCompletionParams): Promise<AiChatCompletionResult> {
       const routing = config.openRouter.providerRouting;
       const provider =
@@ -69,45 +70,30 @@ export function createOpenRouterClient(): AiProviderClient {
         requestBody.provider = provider;
       }
 
-      for (let keyIndex = 0; keyIndex < clients.length; keyIndex += 1) {
-        const client = clients[keyIndex];
+      const credentialIndex = params.credentialIndex ?? 0;
+      const client = clients[credentialIndex];
 
-        try {
-          const response = await client.chat.completions.create(requestBody as never);
-          const choice = response.choices?.[0];
-          const text = choice?.message?.content?.trim() || '';
-
-          return {
-            text,
-            raw: response,
-            model: response.model,
-            finishReason: choice?.finish_reason ?? null,
-            usage: response.usage
-              ? {
-                  promptTokens: response.usage.prompt_tokens,
-                  completionTokens: response.usage.completion_tokens,
-                  totalTokens: response.usage.total_tokens,
-                }
-              : undefined,
-          };
-        } catch (error) {
-          const status = getErrorStatus(error);
-          const hasNextCredential = keyIndex < clients.length - 1;
-
-          // Credential failover is only for an invalid/revoked key. Do not rotate
-          // on 429 or quota/provider limits.
-          if (status === 401 && hasNextCredential) {
-            if (config.debug) {
-              console.warn(`[AI][auth] OpenRouter keyIndex=${keyIndex} rejected with 401; trying next credential.`);
-            }
-            continue;
-          }
-
-          throw error;
-        }
+      if (!client) {
+        throw new Error(`Credencial OpenRouter inexistente no índice ${credentialIndex}.`);
       }
 
-      throw new Error('Nenhuma credencial válida do OpenRouter está disponível.');
+      const response = await client.chat.completions.create(requestBody as never);
+      const choice = response.choices?.[0];
+      const text = choice?.message?.content?.trim() || '';
+
+      return {
+        text,
+        raw: response,
+        model: response.model,
+        finishReason: choice?.finish_reason ?? null,
+        usage: response.usage
+          ? {
+              promptTokens: response.usage.prompt_tokens,
+              completionTokens: response.usage.completion_tokens,
+              totalTokens: response.usage.total_tokens,
+            }
+          : undefined,
+      };
     },
   };
 }
