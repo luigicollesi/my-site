@@ -154,7 +154,8 @@ export async function runAiAttemptOrchestrator(
       } catch (error) {
         const durationMs = Date.now() - startedAt;
         const status = getErrorStatus(error);
-        const action = classifyAiFailure(status);
+        const message = getErrorMessage(error);
+        const action = classifyAiFailure(status, message);
         const outcome = isTimeoutError(error) ? 'timeout' : 'http_error';
 
         failures.push({
@@ -163,7 +164,7 @@ export async function runAiAttemptOrchestrator(
           status,
           outcome,
           durationMs,
-          message: getErrorMessage(error),
+          message,
         });
 
         logAttempt(debug, {
