@@ -1,7 +1,17 @@
+export type AiAttemptOutcome =
+  | 'http_error'
+  | 'timeout'
+  | 'empty'
+  | 'guard_rejected'
+  | 'deadline';
+
 export type AiModelFailure = {
   model: string;
   status?: number;
   message: string;
+  credentialIndex?: number;
+  outcome?: AiAttemptOutcome;
+  durationMs?: number;
 };
 
 export class AiModelsUnavailableError extends Error {
@@ -33,3 +43,9 @@ export function getErrorStatus(error: unknown): number | undefined {
   return typeof maybeStatus === 'number' ? maybeStatus : undefined;
 }
 
+export function isTimeoutError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+
+  const searchable = `${error.name} ${error.message}`.toLowerCase();
+  return searchable.includes('timeout') || searchable.includes('timed out') || searchable.includes('abort');
+}
