@@ -2,7 +2,7 @@ import { runAiAttemptOrchestrator } from '@/lib/ai/attempt-orchestrator';
 import { getAiClient } from '@/lib/ai/client';
 import { getAiConfig } from '@/lib/ai/config';
 import { AiModelsUnavailableError } from '@/lib/ai/errors';
-import { selectPortfolioModels } from '@/lib/ai/model-policy';
+import { getEmergencyPortfolioModelIds, selectPortfolioModels } from '@/lib/ai/model-policy';
 import { getFreeTextModels } from '@/lib/ai/providers/openrouter-models';
 import type { AiChatCompletionParams, AiChatCompletionResult } from '@/lib/ai/types';
 
@@ -13,7 +13,13 @@ export async function chatCompletion(params: AiChatCompletionParams): Promise<Ai
   const client = getAiClient();
   const discoveredModels = await getFreeTextModels();
   const selectedModels = selectPortfolioModels(discoveredModels, MAX_MODELS_PER_RUN);
-  const modelIds = selectedModels.map(({ id }) => id);
+  const selectedModelIds = selectedModels.map(({ id }) => id);
+  const modelIds =
+    selectedModelIds.length > 0
+      ? selectedModelIds
+      : discoveredModels.length === 0
+        ? getEmergencyPortfolioModelIds(MAX_MODELS_PER_RUN)
+        : [];
 
   if (!modelIds.length) {
     throw new AiModelsUnavailableError(
@@ -24,9 +30,10 @@ export async function chatCompletion(params: AiChatCompletionParams): Promise<Ai
   }
 
   if (config.debug) {
+    const source = selectedModelIds.length > 0 ? 'catalog' : 'emergency';
     console.debug(
       `[AI][request] provider=${config.provider} discovered=${discoveredModels.length} ` +
-        `selected=${modelIds.length} credentials=${client.credentialCount} models=${modelIds.join(' -> ')}`,
+        `selected=${modelIds.length} source=${source} credentials=${client.credentialCount} models=${modelIds.join(' -> ')}`,
     );
   }
 
